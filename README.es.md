@@ -9,7 +9,7 @@ Substack no tiene API pública. Su panel de escritor habla con una API privada e
 
 ## Qué aspecto tiene
 
-Las capturas usan **datos ficticios** generados con `npm run demo`. No aparece ninguna publicación real. El recuadro rojo es una anotación de esta documentación, no forma parte de la interfaz.
+Las capturas usan **datos ficticios** generados con `npm run demo` y salen en inglés, como el resto del repositorio. No aparece ninguna publicación real. El recuadro rojo es una anotación de esta documentación, no forma parte de la interfaz.
 
 **Comparativa entre publicaciones, cifras absolutas.** La lista más grande gana en casi todo y el top 10 global lo copa una sola publicación:
 
@@ -110,6 +110,8 @@ Solo habla con `*.substack.com` (lectura) y con tu `127.0.0.1:8787`. La cookie n
 **Pestaña por publicación** — tarjetas de cabecera, la serie de suscriptores, fuentes de crecimiento, vistas por post en el tiempo y una tabla ordenable con una columna *vs media* que compara cada post con el promedio de posts comparables que calcula el propio Substack. Al pinchar un post se despliega ahí mismo, justo bajo su fila, con sus fuentes de tráfico, enlaces más clicados, vistas diarias de la primera semana y (con la app local) cómo se movieron sus números entre sincronizaciones.
 
 El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de posts.
+
+**Idioma.** El panel sigue al navegador desde el que se abre: español si lo está, inglés en cualquier otro caso. Añade `?lang=es` o `?lang=en` a la URL para forzar uno. Los números, las fechas y los porcentajes siguen la misma elección.
 
 ---
 

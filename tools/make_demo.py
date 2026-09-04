@@ -17,30 +17,30 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # que contar: una que creció mucho (donde absoluto y relativo discrepan), una pequeña
 # muy fiel, y una intermedia.
 PUBS = [
-    dict(id=900001, name="Café con Datos", subdomain="cafecondatos", custom_domain="www.cafecondatos.example",
+    dict(id=900001, name="Coffee & Data", subdomain="coffeeanddata", custom_domain="www.coffeeanddata.example",
          start_subs=120, end_subs=1850, months=18, base_reach=0.55, base_open=0.42, engage=0.020, conv=0.012),
     dict(id=900002, name="Bits & Bites", subdomain="bitsandbites", custom_domain=None,
          start_subs=610, end_subs=920, months=14, base_reach=0.48, base_open=0.38, engage=0.058, conv=0.003),
-    dict(id=900003, name="Rutas y Montañas", subdomain="rutasymontanas", custom_domain=None,
+    dict(id=900003, name="Trails & Peaks", subdomain="trailsandpeaks", custom_domain=None,
          start_subs=250, end_subs=340, months=12, base_reach=0.86, base_open=0.61, engage=0.038, conv=0.005),
 ]
 
 TITLES = [
-    "Lo que aprendí midiendo mi propia newsletter", "Tres gráficos que cambiaron mi forma de escribir",
-    "El error de métrica que cometemos todos", "Cómo elegir qué medir cuando todo parece importante",
-    "Escribir para quien ya te lee", "La semana en la que dejé de mirar los números",
-    "Un método simple para decidir sobre qué escribir", "Por qué tu mejor post no es el más leído",
-    "Cinco preguntas antes de pulsar publicar", "El coste oculto de publicar cada semana",
-    "Lo que revela una tasa de apertura baja", "Cuándo conviene repetir un tema",
-    "Empezar de nuevo con la misma lista", "El post que no quería escribir",
-    "Formatos que funcionan y formatos que cansan", "Qué pasa cuando escribes más corto",
-    "Una plantilla para revisar tu archivo", "Del borrador al envío en dos horas",
-    "Escuchar a los que no responden", "Medir sin obsesionarse",
-    "El día que cambié el asunto del email", "Cómo se ve tu newsletter en el móvil",
-    "Responder a todos durante un mes", "Lo que no cuentan las métricas",
+    "What I learned measuring my own newsletter", "Three charts that changed how I write",
+    "The metric mistake we all make", "How to choose what to measure when everything looks important",
+    "Writing for the people already reading", "The week I stopped looking at the numbers",
+    "A simple method for deciding what to write about", "Why your best post is not the most read",
+    "Five questions before hitting publish", "The hidden cost of publishing every week",
+    "What a low open rate really tells you", "When it pays to repeat a topic",
+    "Starting over with the same list", "The post I did not want to write",
+    "Formats that work and formats that tire", "What happens when you write shorter",
+    "A template for reviewing your archive", "From draft to send in two hours",
+    "Listening to the ones who never reply", "Measuring without obsessing",
+    "The day I changed the subject line", "How your newsletter looks on a phone",
+    "Replying to everyone for a month", "What the metrics leave out",
 ]
-SOURCES = [("Búsqueda", 0.28), ("Notes", 0.22), ("Recomendaciones", 0.19),
-           ("Directo", 0.14), ("Redes sociales", 0.10), ("Importación", 0.07)]
+SOURCES = [("Search", 0.28), ("Notes", 0.22), ("Recommendations", 0.19),
+           ("Direct", 0.14), ("Social", 0.10), ("Import", 0.07)]
 REFERRERS = [("email", 0.72), ("direct", 0.11), ("search", 0.07),
              ("substack app", 0.06), ("notes", 0.04)]
 
@@ -94,7 +94,7 @@ def build_pub(cfg, rnd, today):
             "firstWeekDailyStats": daily,
             "referrers": {"sources": [{"source": s, "views": int(views * w),
                                        "percent_of_total_views": str(round(w, 6))} for s, w in REFERRERS]},
-            "links": [[f"https://example.com/enlace-{k+1}", max(1, int(clicks * w))]
+            "links": [[f"https://example.com/link-{k+1}", max(1, int(clicks * w))]
                       for k, w in enumerate([0.5, 0.3, 0.2])],
             "has_more_links": False,
             "comps": {"avg_views": int(views * rnd.uniform(0.75, 1.25)),

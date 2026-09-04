@@ -127,7 +127,7 @@ to report deltas (views gained, new subscribers, best movers) on request.
   its detail: traffic sources, most-clicked links, first-week daily views, and how
   it compares to the publication's typical post (Substack's own benchmark).
 
-The range filter (all / 365 / 90 / 30 days) recomputes every post metric.
+The range filter (all / 365 / 90 / 30 days) recomputes every post metric. The dashboard is bilingual: it follows the viewer's browser language, Spanish or English, and `?lang=es` / `?lang=en` forces one.
 
 ## Notes and limits
 

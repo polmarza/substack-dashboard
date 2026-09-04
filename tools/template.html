@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Panel Substack</title>
+<title>Substack Panel</title>
 <style>
   :root {
     color-scheme: light;
@@ -139,48 +139,48 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Panel Substack <small id="who"></small></h1>
+    <h1><span data-i18n="title"></span> <small id="who"></small></h1>
     <div class="tabs" role="tablist" id="tabs"></div>
     <div class="syncbar" id="syncbar" hidden>
       <span class="syncstate" id="syncstate"></span>
-      <button class="btn" id="login-btn" hidden>Iniciar sesión en Substack</button>
-      <button class="btn primary" id="sync-btn">Sincronizar</button>
+      <button class="btn" id="login-btn" data-i18n="signIn" hidden></button>
+      <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
     </div>
   </header>
   <pre class="synclog" id="synclog" hidden></pre>
 
   <div class="filters">
-    <div class="seg" id="range" role="group" aria-label="Rango">
-      <button data-days="0" aria-pressed="true">Todo</button>
-      <button data-days="365">365 días</button>
-      <button data-days="90">90 días</button>
-      <button data-days="30">30 días</button>
+    <div class="seg" id="range" role="group" data-i18n-aria="rangeLabel">
+      <button data-days="0" aria-pressed="true" data-i18n="all"></button>
+      <button data-days="365" data-i18n="d365"></button>
+      <button data-days="90" data-i18n="d90"></button>
+      <button data-days="30" data-i18n="d30"></button>
     </div>
-    <div class="seg" id="mode" role="group" aria-label="Tipo de métrica">
-      <button data-mode="abs" aria-pressed="true">Absolutas</button>
-      <button data-mode="rel" aria-pressed="false">Relativas</button>
+    <div class="seg" id="mode" role="group" data-i18n-aria="modeLabel">
+      <button data-mode="abs" aria-pressed="true" data-i18n="absolute"></button>
+      <button data-mode="rel" aria-pressed="false" data-i18n="relative"></button>
     </div>
-    <input type="search" id="q" placeholder="Buscar post…" aria-label="Buscar post">
+    <input type="search" id="q" data-i18n-ph="searchPosts">
     <div class="spacer"></div>
     <div class="meta" id="meta"></div>
   </div>
-  <div class="relnote" id="relnote" hidden>Un post antiguo se publicó a una lista más pequeña, así que las cifras absolutas premian a los recientes solo porque la audiencia ha crecido. En modo relativo el alcance se divide entre los suscriptores que recibieron ese envío y la interacción entre las vistas del propio post, de modo que todos se comparan en igualdad. Las clasificaciones dejan fuera los casos con menos de 30 de audiencia o de vistas, porque con un denominador tan pequeño la proporción se dispara.</div>
+  <div class="relnote" id="relnote" data-i18n="relNote" hidden></div>
 
   <div id="compare" hidden>
     <div class="grid tiles" id="cmp-tiles"></div>
     <div class="card" style="margin-bottom:12px">
-      <div class="head"><div><h2>Publicaciones</h2><div class="sub" id="cmp-sub"></div></div></div>
+      <div class="head"><div><h2 data-i18n="publications"></h2><div class="sub" id="cmp-sub"></div></div></div>
       <div class="legend" id="cmp-legend"></div>
       <div class="tablewrap"><table id="cmp-table" class="cmp-table"><thead></thead><tbody></tbody></table></div>
     </div>
     <div class="grid cmp-charts">
-      <div class="card"><div class="head"><div><h2>Suscriptores</h2><div class="sub">Total actual por publicación</div></div></div><div id="cmp-subs"></div></div>
-      <div class="card"><div class="head"><div><h2 id="cmp-views-h">Vistas por post</h2><div class="sub" id="cmp-views-sub"></div></div></div><div id="cmp-views"></div></div>
-      <div class="card"><div class="head"><div><h2>Tasa de apertura</h2><div class="sub">Media de los posts enviados por email</div></div></div><div id="cmp-open"></div></div>
+      <div class="card"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" data-i18n="subsPerPub"></div></div></div><div id="cmp-subs"></div></div>
+      <div class="card"><div class="head"><div><h2 id="cmp-views-h"></h2><div class="sub" id="cmp-views-sub"></div></div></div><div id="cmp-views"></div></div>
+      <div class="card"><div class="head"><div><h2 data-i18n="openRate"></h2><div class="sub" data-i18n="openRateSub"></div></div></div><div id="cmp-open"></div></div>
     </div>
     <div class="card">
-      <div class="head"><div><h2>Mejores posts de todas las publicaciones</h2><div class="sub" id="cmp-top-sub"></div></div>
-        <div class="seg" id="cmp-top-metric"><button data-m="views" aria-pressed="true">Vistas</button><button data-m="open_rate">Apertura</button><button data-m="reactions">Reacciones</button><button data-m="signups">Altas</button></div></div>
+      <div class="head"><div><h2 data-i18n="bestPosts"></h2><div class="sub" id="cmp-top-sub"></div></div>
+        <div class="seg" id="cmp-top-metric"><button data-m="views" aria-pressed="true" data-i18n="mViews"></button><button data-m="open_rate" data-i18n="mOpen"></button><button data-m="reactions" data-i18n="mReactions"></button><button data-m="signups" data-i18n="mSignups"></button></div></div>
       <ol class="top-list" id="cmp-top"></ol>
     </div>
   </div>
@@ -189,29 +189,214 @@
   <div class="grid tiles" id="tiles"></div>
 
   <div class="grid charts">
-    <div class="card"><div class="head"><div><h2>Suscriptores</h2><div class="sub" id="subs-sub"></div></div><button id="subs-table-btn">Ver tabla</button></div><div id="subs-chart"></div><div id="subs-table" hidden></div></div>
-    <div class="card"><div class="head"><div><h2>Fuentes de crecimiento</h2><div class="sub">Nuevos suscriptores por origen, últimos 12 meses</div></div></div><div id="sources-chart"></div></div>
-    <div class="card wide"><div class="head"><div><h2>Vistas por post</h2><div class="sub" id="views-sub"></div></div></div><div id="views-chart"></div><div class="legend" id="views-legend"></div></div>
+    <div class="card"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" id="subs-sub"></div></div><button id="subs-table-btn"></button></div><div id="subs-chart"></div><div id="subs-table" hidden></div></div>
+    <div class="card"><div class="head"><div><h2 data-i18n="growthSources"></h2><div class="sub" data-i18n="growthSourcesSub"></div></div></div><div id="sources-chart"></div></div>
+    <div class="card wide"><div class="head"><div><h2 data-i18n="viewsPerPost"></h2><div class="sub" id="views-sub"></div></div></div><div id="views-chart"></div><div class="legend" id="views-legend"></div></div>
   </div>
 
   <div class="card">
-    <div class="head"><div><h2>Posts</h2><div class="sub" id="posts-sub"></div></div></div>
+    <div class="head"><div><h2 data-i18n="posts"></h2><div class="sub" id="posts-sub"></div></div></div>
     <div class="tablewrap"><table id="posts"><thead></thead><tbody></tbody></table></div>
   </div>
   </div><!-- /pubview -->
-  <footer class="credit">Generado con <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a>, de Pol Marzà · MIT</footer>
+  <footer class="credit"><span data-i18n="creditPre"></span> <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a><span data-i18n="creditPost"></span></footer>
 </div>
 <div class="tooltip" id="tip" hidden></div>
-
 <script id="data" type="application/json">/*__DATA__*/null</script>
 <script>
 (() => {
+  // ---------- textos ----------
+  // Una sola plantilla en dos idiomas. Las claves son las mismas; lo que cambia es el valor.
+  const STRINGS = {
+    es: {
+      title: 'Panel Substack', signIn: 'Iniciar sesión en Substack', sync: 'Sincronizar',
+      rangeLabel: 'Rango', all: 'Todo', d365: '365 días', d90: '90 días', d30: '30 días',
+      modeLabel: 'Tipo de métrica', absolute: 'Absolutas', relative: 'Relativas',
+      searchPosts: 'Buscar post…', compareTab: 'Comparativa',
+      relNote: 'Un post antiguo se publicó a una lista más pequeña, así que las cifras absolutas premian a los recientes solo porque la audiencia ha crecido. En modo relativo el alcance se divide entre los suscriptores que recibieron ese envío y la interacción entre las vistas del propio post, de modo que todos se comparan en igualdad. Las clasificaciones dejan fuera los casos con menos de 30 de audiencia o de vistas, porque con un denominador tan pequeño la proporción se dispara.',
+      creditPre: 'Generado con', creditPost: ', de Pol Marzà · MIT',
+      publications: 'Publicaciones', subscribers: 'Suscriptores', subsPerPub: 'Total actual por publicación',
+      viewsPerPost: 'Vistas por post', viewsPer100: 'Vistas por 100 suscriptores',
+      openRate: 'Tasa de apertura', openRateSub: 'Media de los posts enviados por email',
+      bestPosts: 'Mejores posts de todas las publicaciones',
+      mViews: 'Vistas', mOpen: 'Apertura', mReactions: 'Reacciones', mSignups: 'Altas',
+      growthSources: 'Fuentes de crecimiento', growthSourcesSub: 'Nuevos suscriptores por origen, últimos 12 meses',
+      viewTable: 'Ver tabla', hideTable: 'Ocultar tabla', posts: 'Posts',
+      rangeAll: 'todo el histórico', rangeDays: (n) => `últimos ${n} días`, rangeShort: (n) => `${n} días`,
+      metaPubs: (n, when) => `${n} publicaciones · datos del ${when}`,
+      metaHost: (host, when) => `${host} · datos del ${when}`,
+      tPostsRange: (r) => `Posts (${r})`, drafts: (n) => `${n} borradores`,
+      tViews30: 'Vistas últimos 30 días', vsPrev30: (s) => `${s} vs 30 días antes`,
+      noChange30: 'sin cambios vs 30 días antes',
+      tViewsPerPostAvg: 'Vistas por post (media)', totalViews: (n) => `${n} vistas en total`,
+      tOpenAvg: 'Tasa de apertura media', ctrAvg: (v) => `CTR medio ${v}`,
+      tReactionsPerPost: 'Reacciones por post', comments: (n) => `${n} comentarios`,
+      tSignups: 'Altas atribuidas a posts', unsubs: (n) => `${n} bajas`,
+      tViewsPer100: 'Vistas por 100 suscriptores', overSends: (n) => `sobre ${n} envíos`,
+      tReactionsPer100: 'Reacciones por 100 vistas', commentsPer100: (v) => `${v} comentarios por 100 vistas`,
+      tSignupsPer1000: 'Altas por 1.000 vistas', totalSignups: (n) => `${n} altas en total`,
+      tTotalSubs: 'Suscriptores en total',
+      tBestReach: 'Mejor alcance relativo', viewsPer100Of: (v) => `${v} vistas por 100 suscriptores`,
+      tBestOpen: 'Mejor tasa de apertura',
+      tMostEngagement: 'Más interacción', reactionsPer100Of: (v) => `${v} reacciones por 100 vistas`,
+      tBestConversion: 'Mejor conversión', signupsPer1000Of: (v) => `${v} altas por 1.000 vistas`,
+      tMostViewsPerPost: 'Más vistas por post', viewsAvgOf: (v) => `${v} vistas de media`,
+      cmpSubRel: (r) => `Métricas normalizadas por audiencia sobre ${r}. Así una publicación pequeña no queda por debajo solo por tener menos suscriptores. Haz clic en una para abrir su panel.`,
+      cmpSubAbs: (r) => `Métricas de posts calculadas sobre ${r}. Haz clic en una publicación para abrir su panel.`,
+      cmpViewsSubRel: (r) => `Alcance normalizado por audiencia, ${r}`,
+      cmpViewsSubAbs: (r) => `Media por publicación, ${r}`,
+      viewsInPosts: (v, p) => `${v} vistas en ${p} posts`,
+      subsAndTraffic: (s, t) => `${s} suscriptores · ${t} visitas`,
+      noDataRange: 'Sin datos en este rango.',
+      cPublication: 'Publicación', cDelta30: '± 30 días', cViewsPerPost: 'Vistas/post',
+      cReactionsPerPost: 'Reacc./post', cComments: 'Coment.', cDelivered: 'Entregados',
+      cViewsPer100: 'Vistas/100 sus.', cViewsPer100Title: 'Vistas por cada 100 suscriptores que recibieron el envío',
+      cReactionsPer100: 'Reacc./100 vistas', cCommentsPer100: 'Coment./100 vistas', cSignupsPer1000: 'Altas/1.000 vistas',
+      cPost: 'Post', cVsAvg: 'vs media', cVsAvgTitle: 'Vistas frente a la media de posts comparables (según Substack)',
+      cReactions: 'Reacc.', cShares: 'Compart.',
+      cAudience: 'Audiencia', cAudienceTitle: 'Suscriptores que recibieron este envío. Es el denominador del alcance.',
+      topBy: (label, n) => `Top 10 por ${label} entre ${n} posts`,
+      lastDays: (n) => `, últimos ${n} días`, excludeBelow: (n) => `. Excluye los que no llegan a ${n} de denominador.`,
+      lblViews: 'vistas', lblOpen: 'tasa de apertura', lblReactions: 'reacciones', lblSignups: 'altas',
+      lblViewsRel: 'vistas por 100 suscriptores', lblReactionsRel: 'reacciones por 100 vistas', lblSignupsRel: 'altas por 1.000 vistas',
+      noPostsRange: 'No hay posts en este rango.',
+      uViews: 'vistas', uDelivered: 'entregados', uReactions: 'reacc.', uSubscribers: 'suscriptores',
+      fromTo: (a, b) => `Del ${a} al ${b}`, date: 'Fecha',
+      noSeries: 'Sin serie temporal para este rango.', noSources: 'Sin datos de fuentes.',
+      chrono: (n) => `${n} posts, orden cronológico.`,
+      viewsPer100Explain: ' Vistas por cada 100 suscriptores que recibieron el envío.',
+      greyLineAvg: (v) => ` Línea gris: media (${v}).`, topThreeNote: ' En naranja, los 3 más vistos.',
+      legendPostViews: 'Vistas del post', legendTop3: 'Top 3',
+      notEmailed: 'no enviado por email',
+      perHundredSubs: (v, d) => ` · ${v} por 100 sus. (${d} entregados)`,
+      tipOpen: (o) => `apertura ${o}`, tipReactions: (r, rel) => `${r} reacc. (${rel} por 100 vistas)`,
+      postsSub: (n, rel) => `${n} posts${rel}. Haz clic en una columna para ordenar y en un post para ver el detalle.`,
+      normalisedShort: ', métricas normalizadas por audiencia', badgePaid: 'de pago',
+      close: 'Cerrar', audEveryone: 'para todos', audPaid: 'solo de pago',
+      vsComparables: (s) => `${s} vs comparables`, deliveredN: (n) => `${n} entregados`,
+      ofN: (a, b) => `${a} de ${b}`, uniqueClicks: (n) => `${n} clics únicos`,
+      commentsShares: (c, s) => `${c} coment. · ${s} compart.`,
+      signupsNote: (d, u) => `${d} en 24 h · ${u} bajas`,
+      normalisedCaption: 'Normalizado por audiencia',
+      dViewsPer100: 'Vistas / 100 sus.', reachOverSend: 'alcance sobre el envío',
+      dReactionsPer100: 'Reacc. / 100 vistas', engagementOverReach: 'interacción sobre el alcance',
+      dSignupsPer1000: 'Altas / 1.000 vistas', conversionOverTraffic: 'conversión sobre el tráfico',
+      dComparable: 'Vistas de posts comparables', comparableNote: (o, n) => `apertura ${o} · sobre ${n} posts`,
+      secSources: 'De dónde vienen las vistas', secWeek: 'Primera semana (vistas al día)',
+      secLinks: 'Enlaces más clicados', secEvolution: 'Evolución entre sincronizaciones',
+      noOrigin: 'Sin datos de origen.', noDaily: 'Sin datos diarios.', noClicks: 'Sin clics registrados.',
+      syncWaitLogin: 'Esperando a que inicies sesión en la ventana de Chrome…',
+      syncBuilding: 'Generando el panel…', syncing: 'Sincronizando… ',
+      syncFailed: 'La última operación falló. Revisa el registro.',
+      lastSync: 'Última sincronización: ', viaExtension: ' (extensión de Chrome)',
+      noPlaywright: ' · sin sesión de Playwright: usa la extensión de Chrome',
+      noSession: 'Sin sesión: usa la extensión de Chrome o inicia sesión.',
+      neverSynced: 'Sin sincronizar todavía.', alreadyRunning: 'Ya hay una operación en marcha.',
+      noChangePrev: 'sin cambios vs periodo anterior', rangeAllShort: 'todo',
+    },
+    en: {
+      title: 'Substack Panel', signIn: 'Sign in to Substack', sync: 'Sync',
+      rangeLabel: 'Range', all: 'All', d365: '365 days', d90: '90 days', d30: '30 days',
+      modeLabel: 'Metric type', absolute: 'Absolute', relative: 'Relative',
+      searchPosts: 'Search posts…', compareTab: 'Comparison',
+      relNote: 'An older post went out to a smaller list, so raw counts flatter recent ones simply because the audience grew. In relative mode reach is divided by the subscribers who received that send, and engagement by the post’s own views, so every post is compared on equal terms. Rankings leave out anything below 30 in audience or views, because a denominator that small sends the ratio through the roof.',
+      creditPre: 'Generated with', creditPost: ' by Pol Marzà · MIT',
+      publications: 'Publications', subscribers: 'Subscribers', subsPerPub: 'Current total per publication',
+      viewsPerPost: 'Views per post', viewsPer100: 'Views per 100 subscribers',
+      openRate: 'Open rate', openRateSub: 'Average across posts sent by email',
+      bestPosts: 'Best posts across all publications',
+      mViews: 'Views', mOpen: 'Open rate', mReactions: 'Reactions', mSignups: 'Signups',
+      growthSources: 'Growth sources', growthSourcesSub: 'New subscribers by source, last 12 months',
+      viewTable: 'View table', hideTable: 'Hide table', posts: 'Posts',
+      rangeAll: 'all time', rangeDays: (n) => `last ${n} days`, rangeShort: (n) => `${n} days`,
+      metaPubs: (n, when) => `${n} publications · data from ${when}`,
+      metaHost: (host, when) => `${host} · data from ${when}`,
+      tPostsRange: (r) => `Posts (${r})`, drafts: (n) => `${n} drafts`,
+      tViews30: 'Views, last 30 days', vsPrev30: (s) => `${s} vs 30 days earlier`,
+      noChange30: 'no change vs 30 days earlier',
+      tViewsPerPostAvg: 'Views per post (average)', totalViews: (n) => `${n} views in total`,
+      tOpenAvg: 'Average open rate', ctrAvg: (v) => `Average CTR ${v}`,
+      tReactionsPerPost: 'Reactions per post', comments: (n) => `${n} comments`,
+      tSignups: 'Signups attributed to posts', unsubs: (n) => `${n} unsubscribes`,
+      tViewsPer100: 'Views per 100 subscribers', overSends: (n) => `across ${n} sends`,
+      tReactionsPer100: 'Reactions per 100 views', commentsPer100: (v) => `${v} comments per 100 views`,
+      tSignupsPer1000: 'Signups per 1,000 views', totalSignups: (n) => `${n} signups in total`,
+      tTotalSubs: 'Subscribers in total',
+      tBestReach: 'Best relative reach', viewsPer100Of: (v) => `${v} views per 100 subscribers`,
+      tBestOpen: 'Best open rate',
+      tMostEngagement: 'Most engagement', reactionsPer100Of: (v) => `${v} reactions per 100 views`,
+      tBestConversion: 'Best conversion', signupsPer1000Of: (v) => `${v} signups per 1,000 views`,
+      tMostViewsPerPost: 'Most views per post', viewsAvgOf: (v) => `${v} views on average`,
+      cmpSubRel: (r) => `Metrics normalised by audience over ${r}. A small publication is no longer pushed down just for having fewer subscribers. Click one to open its dashboard.`,
+      cmpSubAbs: (r) => `Post metrics calculated over ${r}. Click a publication to open its dashboard.`,
+      cmpViewsSubRel: (r) => `Reach normalised by audience, ${r}`,
+      cmpViewsSubAbs: (r) => `Average per publication, ${r}`,
+      viewsInPosts: (v, p) => `${v} views across ${p} posts`,
+      subsAndTraffic: (s, t) => `${s} subscribers · ${t} visits`,
+      noDataRange: 'No data in this range.',
+      cPublication: 'Publication', cDelta30: '± 30 days', cViewsPerPost: 'Views/post',
+      cReactionsPerPost: 'Reactions/post', cComments: 'Comments', cDelivered: 'Delivered',
+      cViewsPer100: 'Views/100 subs', cViewsPer100Title: 'Views per 100 subscribers who received the send',
+      cReactionsPer100: 'Reactions/100 views', cCommentsPer100: 'Comments/100 views', cSignupsPer1000: 'Signups/1,000 views',
+      cPost: 'Post', cVsAvg: 'vs average', cVsAvgTitle: 'Views against the average of comparable posts (Substack’s own benchmark)',
+      cReactions: 'Reactions', cShares: 'Shares',
+      cAudience: 'Audience', cAudienceTitle: 'Subscribers who received this send. It is the denominator for reach.',
+      topBy: (label, n) => `Top 10 by ${label} among ${n} posts`,
+      lastDays: (n) => `, last ${n} days`, excludeBelow: (n) => `. Excludes anything below ${n} in the denominator.`,
+      lblViews: 'views', lblOpen: 'open rate', lblReactions: 'reactions', lblSignups: 'signups',
+      lblViewsRel: 'views per 100 subscribers', lblReactionsRel: 'reactions per 100 views', lblSignupsRel: 'signups per 1,000 views',
+      noPostsRange: 'No posts in this range.',
+      uViews: 'views', uDelivered: 'delivered', uReactions: 'reactions', uSubscribers: 'subscribers',
+      fromTo: (a, b) => `From ${a} to ${b}`, date: 'Date',
+      noSeries: 'No time series for this range.', noSources: 'No source data.',
+      chrono: (n) => `${n} posts, in chronological order.`,
+      viewsPer100Explain: ' Views per 100 subscribers who received the send.',
+      greyLineAvg: (v) => ` Grey line: average (${v}).`, topThreeNote: ' In orange, the three most viewed.',
+      legendPostViews: 'Post views', legendTop3: 'Top 3',
+      notEmailed: 'not sent by email',
+      perHundredSubs: (v, d) => ` · ${v} per 100 subs (${d} delivered)`,
+      tipOpen: (o) => `open rate ${o}`, tipReactions: (r, rel) => `${r} reactions (${rel} per 100 views)`,
+      postsSub: (n, rel) => `${n} posts${rel}. Click a column to sort and a post to see its detail.`,
+      normalisedShort: ', metrics normalised by audience', badgePaid: 'paid',
+      close: 'Close', audEveryone: 'everyone', audPaid: 'paid only',
+      vsComparables: (s) => `${s} vs comparable posts`, deliveredN: (n) => `${n} delivered`,
+      ofN: (a, b) => `${a} of ${b}`, uniqueClicks: (n) => `${n} unique clicks`,
+      commentsShares: (c, s) => `${c} comments · ${s} shares`,
+      signupsNote: (d, u) => `${d} within 24 h · ${u} unsubscribes`,
+      normalisedCaption: 'Normalised by audience',
+      dViewsPer100: 'Views / 100 subs', reachOverSend: 'reach over the send',
+      dReactionsPer100: 'Reactions / 100 views', engagementOverReach: 'engagement over reach',
+      dSignupsPer1000: 'Signups / 1,000 views', conversionOverTraffic: 'conversion over traffic',
+      dComparable: 'Views of comparable posts', comparableNote: (o, n) => `open rate ${o} · across ${n} posts`,
+      secSources: 'Where the views come from', secWeek: 'First week (views per day)',
+      secLinks: 'Most-clicked links', secEvolution: 'Change between syncs',
+      noOrigin: 'No source data.', noDaily: 'No daily data.', noClicks: 'No clicks recorded.',
+      syncWaitLogin: 'Waiting for you to sign in in the Chrome window…',
+      syncBuilding: 'Building the dashboard…', syncing: 'Syncing… ',
+      syncFailed: 'The last operation failed. Check the log.',
+      lastSync: 'Last sync: ', viaExtension: ' (Chrome extension)',
+      noPlaywright: ' · no Playwright session: use the Chrome extension',
+      noSession: 'No session: use the Chrome extension or sign in.',
+      neverSynced: 'Not synced yet.', alreadyRunning: 'An operation is already running.',
+      noChangePrev: 'no change vs previous period', rangeAllShort: 'all',
+    },
+  };
+
   const DATA = JSON.parse(document.getElementById('data').textContent);
   const $ = (s, el = document) => el.querySelector(s);
-  const nf = new Intl.NumberFormat('es-ES');
-  const pf = (x, d = 1) => (x == null || isNaN(x) ? '—' : (x * 100).toFixed(d).replace('.', ',') + ' %');
-  const df = (s) => new Date(s).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-  const dfs = (s) => new Date(s).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+  // El panel se adapta a quien lo abre: español si el navegador lo está, inglés en cualquier
+  // otro caso. ?lang=es o ?lang=en fuerza uno concreto (así se capturan las imágenes del README).
+  const LANG = (() => {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'es' || q === 'en') return q;
+    return (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+  })();
+  const LOCALE = LANG === 'es' ? 'es-ES' : 'en';
+  const T = STRINGS[LANG];
+  const nf = new Intl.NumberFormat(LOCALE);
+  const pf = (x, d = 1) => (x == null || isNaN(x) ? '—' : new Intl.NumberFormat(LOCALE, { style: 'percent', minimumFractionDigits: d, maximumFractionDigits: d }).format(x));
+  const df = (s) => new Date(s).toLocaleDateString(LOCALE, { day: '2-digit', month: 'short', year: 'numeric' });
+  const dfs = (s) => new Date(s).toLocaleDateString(LOCALE, { day: '2-digit', month: 'short' });
   const compact = (n) => n >= 1e6 ? (n / 1e6).toFixed(1) + ' M' : n >= 1e4 ? Math.round(n / 1e3) + ' k' : nf.format(n);
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -240,10 +425,18 @@
   // Agregado ponderado (suma/suma), no media de proporciones: un post con 4 vistas no debe
   // pesar lo mismo que uno con 400 al resumir toda una publicación.
   const aggRate = (posts, numK, denK, per) => rate(posts.reduce((a, x) => a + (x[numK] || 0), 0), posts.reduce((a, x) => a + (x[denK] || 0), 0), per);
-  const dec = (v, d = 1) => v == null ? '—' : v.toFixed(d).replace('.', ',');
+  const pctSigned = (x) => x == null ? '—' : new Intl.NumberFormat(LOCALE, { style: 'percent', signDisplay: 'exceptZero', maximumFractionDigits: 0 }).format(x);
+  const dec = (v, d = 1) => v == null ? '—' : new Intl.NumberFormat(LOCALE, { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
   const tip = $('#tip');
   const showTip = (html, x, y) => { tip.innerHTML = html; tip.hidden = false; const r = tip.getBoundingClientRect(); tip.style.left = Math.min(x + 14, innerWidth - r.width - 8) + 'px'; tip.style.top = Math.max(8, y - r.height - 12) + 'px'; };
   const hideTip = () => { tip.hidden = true; };
+
+  // Textos fijos del HTML, rellenados desde el diccionario
+  document.title = T.title;
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = T[n.dataset.i18n]; });
+  document.querySelectorAll('[data-i18n-ph]').forEach(n => { const s = T[n.dataset.i18nPh]; n.placeholder = s; n.setAttribute('aria-label', s); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(n => n.setAttribute('aria-label', T[n.dataset.i18nAria]));
 
   // ---------- tabs ----------
   const tabs = $('#tabs');
@@ -252,7 +445,7 @@
     b.onclick = () => { state.pub = idx; state.selected = null; [...tabs.children].forEach(c => c.setAttribute('aria-selected', +c.dataset.idx === idx)); render(); };
     tabs.appendChild(b);
   };
-  addTab('Comparativa', -1);
+  addTab(T.compareTab, -1);
   DATA.publications.forEach((p, i) => addTab(p.name, i, `<i class="pubdot" style="background:${pubColor(i)}"></i>${esc(p.name)}`));
   $('#mode').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
@@ -265,7 +458,8 @@
   $('#who').textContent = DATA.user ? '@' + DATA.user.handle : '';
   $('#range').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.days = +b.dataset.days; [...$('#range').children].forEach(c => c.setAttribute('aria-pressed', c === b)); render(); });
   $('#q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); renderTable(); renderViews(); });
-  $('#subs-table-btn').onclick = () => { const t = $('#subs-table'); t.hidden = !t.hidden; $('#subs-table-btn').textContent = t.hidden ? 'Ver tabla' : 'Ocultar tabla'; };
+  $('#subs-table-btn').textContent = T.viewTable;
+  $('#subs-table-btn').onclick = () => { const t = $('#subs-table'); t.hidden = !t.hidden; $('#subs-table-btn').textContent = t.hidden ? T.viewTable : T.hideTable; };
 
   const pub = () => DATA.publications[state.pub];
   const cutoff = () => state.days ? Date.now() - state.days * 864e5 : 0;
@@ -300,15 +494,15 @@
     };
   }
   const CMP_COLS_ABS = [
-    { key: 'name', label: 'Publicación', t: true }, { key: 'subscribers', label: 'Suscriptores' }, { key: 'delta30', label: '± 30 días' },
-    { key: 'posts', label: 'Posts' }, { key: 'views', label: 'Vistas' }, { key: 'views_avg', label: 'Vistas/post' },
-    { key: 'open_rate', label: 'Apertura' }, { key: 'ctr', label: 'CTR' }, { key: 'reactions_avg', label: 'Reacc./post' }, { key: 'comments', label: 'Coment.' }, { key: 'signups', label: 'Altas' },
+    { key: 'name', label: T.cPublication, t: true }, { key: 'subscribers', label: T.subscribers }, { key: 'delta30', label: T.cDelta30 },
+    { key: 'posts', label: T.posts }, { key: 'views', label: T.mViews }, { key: 'views_avg', label: T.cViewsPerPost },
+    { key: 'open_rate', label: T.mOpen }, { key: 'ctr', label: 'CTR' }, { key: 'reactions_avg', label: T.cReactionsPerPost }, { key: 'comments', label: T.cComments }, { key: 'signups', label: T.mSignups },
   ];
   const CMP_COLS_REL = [
-    { key: 'name', label: 'Publicación', t: true }, { key: 'subscribers', label: 'Suscriptores' }, { key: 'delta30', label: '± 30 días' },
-    { key: 'posts', label: 'Posts' }, { key: 'views_rel', label: 'Vistas/100 sus.', title: 'Vistas por cada 100 suscriptores que recibieron el envío' },
-    { key: 'open_rate', label: 'Apertura' }, { key: 'ctr', label: 'CTR' },
-    { key: 'reactions_rel', label: 'Reacc./100 vistas' }, { key: 'comments_rel', label: 'Coment./100 vistas' }, { key: 'signups_rel', label: 'Altas/1.000 vistas' },
+    { key: 'name', label: T.cPublication, t: true }, { key: 'subscribers', label: T.subscribers }, { key: 'delta30', label: T.cDelta30 },
+    { key: 'posts', label: T.posts }, { key: 'views_rel', label: T.cViewsPer100, title: T.cViewsPer100Title },
+    { key: 'open_rate', label: T.mOpen }, { key: 'ctr', label: 'CTR' },
+    { key: 'reactions_rel', label: T.cReactionsPer100 }, { key: 'comments_rel', label: T.cCommentsPer100 }, { key: 'signups_rel', label: T.cSignupsPer1000 },
   ];
   const cmpCellOf = (m, key) => {
     if (key === 'name') return `<td class="t"><i class="pubdot" style="background:${pubColor(m.i)}"></i><span class="title">${esc(m.name)}</span><div class="date">${esc(m.host)}</div></td>`;
@@ -322,30 +516,28 @@
   const signed = (d) => d == null ? '—' : d === 0 ? '0' : `<span class="vs ${d > 0 ? 'up' : 'down'}">${d > 0 ? '+' : '−'}${nf.format(Math.abs(d))}</span>`;
   function renderCompare() {
     const M = DATA.publications.map(pubMetrics);
-    const range = state.days ? `últimos ${state.days} días` : 'todo el histórico';
-    $('#meta').textContent = `${DATA.publications.length} publicaciones · datos del ${new Date(DATA.generated_at).toLocaleString('es-ES')}`;
+    const range = state.days ? T.rangeDays(state.days) : T.rangeAll;
+    $('#meta').textContent = T.metaPubs(DATA.publications.length, new Date(DATA.generated_at).toLocaleString(LOCALE));
     const tot = (k) => M.reduce((a, m) => a + (m[k] || 0), 0);
     const best = (k) => M.filter(m => m[k] != null && m.posts > 0).sort((a, b) => b[k] - a[k])[0];
     const bestRel = (k, denK) => M.filter(m => m[k] != null && m[denK] >= MIN_DEN).sort((a, b) => b[k] - a[k])[0];
     const bv = best('views_avg'), bo = best('open_rate');
     const br = bestRel('views_rel', 'den_reach'), bg = bestRel('reactions_rel', 'den_eng'), bs = bestRel('signups_rel', 'den_eng');
     const cmpHead = [
-      tile('Suscriptores en total', nf.format(tot('subscribers')), signedDelta(M.reduce((a, m) => a + (m.delta30 || 0), 0)), 'hero'),
-      tile(`Posts (${range})`, nf.format(tot('posts')), { text: `${nf.format(tot('views'))} vistas en total` }),
+      tile(T.tTotalSubs, nf.format(tot('subscribers')), signedDelta(M.reduce((a, m) => a + (m.delta30 || 0), 0)), 'hero'),
+      tile(T.tPostsRange(range), nf.format(tot('posts')), { text: T.totalViews(nf.format(tot('views'))) }),
     ];
     $('#cmp-tiles').innerHTML = (isRel() ? cmpHead.concat([
-      tile('Mejor alcance relativo', br ? esc(br.name) : '—', br ? { text: `${dec(br.views_rel)} vistas por 100 suscriptores` } : null),
-      tile('Mejor tasa de apertura', bo ? esc(bo.name) : '—', bo ? { text: pf(bo.open_rate) } : null),
-      tile('Más interacción', bg ? esc(bg.name) : '—', bg ? { text: `${dec(bg.reactions_rel)} reacciones por 100 vistas` } : null),
-      tile('Mejor conversión', bs ? esc(bs.name) : '—', bs ? { text: `${dec(bs.signups_rel)} altas por 1.000 vistas` } : null),
+      tile(T.tBestReach, br ? esc(br.name) : '—', br ? { text: T.viewsPer100Of(dec(br.views_rel)) } : null),
+      tile(T.tBestOpen, bo ? esc(bo.name) : '—', bo ? { text: pf(bo.open_rate) } : null),
+      tile(T.tMostEngagement, bg ? esc(bg.name) : '—', bg ? { text: T.reactionsPer100Of(dec(bg.reactions_rel)) } : null),
+      tile(T.tBestConversion, bs ? esc(bs.name) : '—', bs ? { text: T.signupsPer1000Of(dec(bs.signups_rel)) } : null),
     ]) : cmpHead.concat([
-      tile('Más vistas por post', bv ? esc(bv.name) : '—', bv ? { text: `${nf.format(Math.round(bv.views_avg))} vistas de media` } : null),
-      tile('Mejor tasa de apertura', bo ? esc(bo.name) : '—', bo ? { text: pf(bo.open_rate) } : null),
-      tile('Altas atribuidas a posts', nf.format(tot('signups')), { text: `${nf.format(tot('unsubscribes'))} bajas` }),
+      tile(T.tMostViewsPerPost, bv ? esc(bv.name) : '—', bv ? { text: T.viewsAvgOf(nf.format(Math.round(bv.views_avg))) } : null),
+      tile(T.tBestOpen, bo ? esc(bo.name) : '—', bo ? { text: pf(bo.open_rate) } : null),
+      tile(T.tSignups, nf.format(tot('signups')), { text: T.unsubs(nf.format(tot('unsubscribes'))) }),
     ])).join('');
-    $('#cmp-sub').textContent = isRel()
-      ? `Métricas normalizadas por audiencia sobre ${range}. Así una publicación pequeña no queda por debajo solo por tener menos suscriptores. Haz clic en una para abrir su panel.`
-      : `Métricas de posts calculadas sobre ${range}. Haz clic en una publicación para abrir su panel.`;
+    $('#cmp-sub').textContent = isRel() ? T.cmpSubRel(range) : T.cmpSubAbs(range);
     $('#cmp-legend').innerHTML = M.map(m => `<span><i style="background:${pubColor(m.i)}"></i>${esc(m.name)}</span>`).join('');
     const { key, dir } = state.cmpSort;
     const rows = M.slice().sort((a, b) => { if (key === 'name') return dir === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name); const va = a[key] ?? -Infinity, vb = b[key] ?? -Infinity; return dir === 'asc' ? va - vb : vb - va; });
@@ -354,21 +546,21 @@
     $('#cmp-table thead').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.key; state.cmpSort = { key: k, dir: state.cmpSort.key === k && state.cmpSort.dir === 'desc' ? 'asc' : 'desc' }; renderCompare(); };
     $('#cmp-table tbody').innerHTML = rows.map(m => `<tr data-idx="${m.i}">${cmpCols.map(c => cmpCellOf(m, c.key)).join('')}</tr>`).join('');
     $('#cmp-table tbody').onclick = e => { const tr = e.target.closest('tr[data-idx]'); if (!tr) return; state.pub = +tr.dataset.idx; [...tabs.children].forEach(c => c.setAttribute('aria-selected', +c.dataset.idx === state.pub)); render(); scrollTo({ top: 0, behavior: 'smooth' }); };
-    $('#cmp-views-h').textContent = isRel() ? 'Vistas por 100 suscriptores' : 'Vistas por post';
-    $('#cmp-views-sub').textContent = isRel() ? `Alcance normalizado por audiencia, ${range}` : `Media por publicación, ${range}`;
+    $('#cmp-views-h').textContent = isRel() ? T.viewsPer100 : T.viewsPerPost;
+    $('#cmp-views-sub').textContent = isRel() ? T.cmpViewsSubRel(range) : T.cmpViewsSubAbs(range);
     hbars('#cmp-subs', M.map(m => ({ i: m.i, label: m.name, v: m.subscribers, text: nf.format(m.subscribers) })));
     hbars('#cmp-views', isRel()
-      ? M.filter(m => m.views_rel != null).map(m => ({ i: m.i, label: m.name, v: m.views_rel, text: dec(m.views_rel), tip: `${nf.format(m.views)} vistas en ${m.posts} posts` }))
-      : M.filter(m => m.views_avg != null).map(m => ({ i: m.i, label: m.name, v: Math.round(m.views_avg), text: nf.format(Math.round(m.views_avg)), tip: `${nf.format(m.views)} vistas en ${m.posts} posts` })));
+      ? M.filter(m => m.views_rel != null).map(m => ({ i: m.i, label: m.name, v: m.views_rel, text: dec(m.views_rel), tip: T.viewsInPosts(nf.format(m.views), m.posts) }))
+      : M.filter(m => m.views_avg != null).map(m => ({ i: m.i, label: m.name, v: Math.round(m.views_avg), text: nf.format(Math.round(m.views_avg)), tip: T.viewsInPosts(nf.format(m.views), m.posts) })));
     hbars('#cmp-open', M.filter(m => m.open_rate != null).map(m => ({ i: m.i, label: m.name, v: m.open_rate, text: pf(m.open_rate), tip: `CTR ${pf(m.ctr)}` })));
     renderTop();
   }
-  function signedDelta(d) { return d ? { text: `${d > 0 ? '+' : '−'}${nf.format(Math.abs(d))} vs 30 días antes`, cls: d > 0 ? 'up' : 'down' } : { text: 'sin cambios vs 30 días antes' }; }
+  function signedDelta(d) { return d ? { text: T.vsPrev30(`${d > 0 ? '+' : '−'}${nf.format(Math.abs(d))}`), cls: d > 0 ? 'up' : 'down' } : { text: T.noChange30 }; }
   // barras horizontales con color fijo por publicación
   function hbars(sel, rows) {
     const box = $(sel); box.innerHTML = '';
     rows = rows.slice().sort((a, b) => b.v - a.v);
-    if (!rows.length) { box.innerHTML = '<div class="empty">Sin datos en este rango.</div>'; return; }
+    if (!rows.length) { box.innerHTML = `<div class="empty">${T.noDataRange}</div>`; return; }
     const W = width(sel), rowH = 28, m = { l: 120, r: 64 }, H = rows.length * rowH + 8, max = Math.max(...rows.map(r => r.v), 1e-9);
     const svg = svgEl(W, H);
     rows.forEach((r, i) => {
@@ -390,16 +582,17 @@
       .filter(x => (base !== 'open_rate' || x.delivered > 0) && x[k] != null && (!isRel() || denOf(x) >= MIN_DEN));
     const top = all.slice().sort((a, b) => (b[k] || 0) - (a[k] || 0)).slice(0, 10);
     const label = isRel()
-      ? { views: 'vistas por 100 suscriptores', open_rate: 'de apertura', reactions: 'reacciones por 100 vistas', signups: 'altas por 1.000 vistas' }[base]
-      : { views: 'vistas', open_rate: 'de apertura', reactions: 'reacciones', signups: 'altas' }[base];
-    $('#cmp-top-sub').textContent = `Top 10 por ${label} entre ${nf.format(all.length)} posts${state.days ? `, últimos ${state.days} días` : ''}${isRel() ? `. Excluye los que no llegan a ${MIN_DEN} de denominador.` : '.'}`;
+      ? { views: T.lblViewsRel, open_rate: T.lblOpen, reactions: T.lblReactionsRel, signups: T.lblSignupsRel }[base]
+      : { views: T.lblViews, open_rate: T.lblOpen, reactions: T.lblReactions, signups: T.lblSignups }[base];
+    $('#cmp-top-sub').textContent = T.topBy(label, nf.format(all.length))
+      + (state.days ? T.lastDays(state.days) : '') + (isRel() ? T.excludeBelow(MIN_DEN) : '.');
     const topVal = (x) => k === 'open_rate' ? pf(x.open_rate) : REL_KEYS.has(k) ? dec(x[k]) : nf.format(x[k] || 0);
-    $('#cmp-top').innerHTML = top.length ? top.map((x, n) => `<li><span class="rank">${n + 1}</span><span><i class="pubdot" style="background:${pubColor(x.i)}"></i><a class="pt" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a><div class="pm">${esc(x.pub)} · ${df(x.date)}</div></span><span class="pv">${topVal(x)}<br><small>${nf.format(x.views)} vistas${x.delivered ? ` · ${nf.format(x.delivered)} entregados` : ''} · ${x.reactions} reacc.</small></span></li>`).join('') : '<li class="empty">No hay posts en este rango.</li>';
+    $('#cmp-top').innerHTML = top.length ? top.map((x, n) => `<li><span class="rank">${n + 1}</span><span><i class="pubdot" style="background:${pubColor(x.i)}"></i><a class="pt" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a><div class="pm">${esc(x.pub)} · ${df(x.date)}</div></span><span class="pv">${topVal(x)}<br><small>${nf.format(x.views)} ${T.uViews}${x.delivered ? ` · ${nf.format(x.delivered)} ${T.uDelivered}` : ''} · ${x.reactions} ${T.uReactions}</small></span></li>`).join('') : `<li class="empty">${T.noPostsRange}</li>`;
   }
 
   function renderMeta() {
     const p = pub();
-    $('#meta').textContent = `${p.host} · datos del ${new Date(p.fetched_at).toLocaleString('es-ES')}`;
+    $('#meta').textContent = T.metaHost(p.host, new Date(p.fetched_at).toLocaleString(LOCALE));
   }
 
   function tile(label, value, delta, cls = '') {
@@ -407,8 +600,8 @@
   }
   function deltaOf(now, before, suffix = '') {
     if (now == null || before == null) return null;
-    const d = now - before; if (!d) return { text: 'sin cambios vs periodo anterior' };
-    return { text: `${d > 0 ? '+' : '−'}${nf.format(Math.abs(d))}${suffix} vs 30 días antes`, cls: d > 0 ? 'up' : 'down' };
+    const d = now - before; if (!d) return { text: T.noChangePrev };
+    return { text: T.vsPrev30(`${d > 0 ? '+' : '−'}${nf.format(Math.abs(d))}${suffix}`), cls: d > 0 ? 'up' : 'down' };
   }
   function renderTiles() {
     const p = pub(), s = p.summary || {}, v30 = p.summary_v2?.[30] || {};
@@ -419,22 +612,22 @@
     const sent = posts.filter(x => x.delivered > 0);
     const openRate = sent.length ? sent.reduce((a, x) => a + x.open_rate, 0) / sent.length : null;
     const ctr = sent.length ? sent.reduce((a, x) => a + x.ctr, 0) / sent.length : null;
-    const range = state.days ? `${state.days} días` : 'todo';
+    const range = state.days ? T.rangeShort(state.days) : T.rangeAllShort;
     const head = [
-      tile('Suscriptores', nf.format(s.totalEmail ?? v30.totalSubscribersEnd ?? 0), deltaOf(v30.totalSubscribersEnd, v30.totalSubscribersStart), 'hero'),
-      tile(`Posts (${range})`, nf.format(n), { text: `${nf.format(p.counts?.drafts ?? 0)} borradores` }),
+      tile(T.subscribers, nf.format(s.totalEmail ?? v30.totalSubscribersEnd ?? 0), deltaOf(v30.totalSubscribersEnd, v30.totalSubscribersStart), 'hero'),
+      tile(T.tPostsRange(range), nf.format(n), { text: T.drafts(nf.format(p.counts?.drafts ?? 0)) }),
     ];
     $('#tiles').innerHTML = (isRel() ? head.concat([
-      tile('Vistas por 100 suscriptores', dec(aggRate(posts, 'views', 'delivered', REACH_DEN)), { text: `sobre ${nf.format(posts.reduce((a, x) => a + (x.delivered || 0), 0))} envíos` }),
-      tile('Tasa de apertura media', pf(openRate), { text: `CTR medio ${pf(ctr)}` }),
-      tile('Reacciones por 100 vistas', dec(aggRate(posts, 'reactions', 'views', ENG_DEN)), { text: `${dec(aggRate(posts, 'comments', 'views', ENG_DEN))} comentarios por 100 vistas` }),
-      tile('Altas por 1.000 vistas', dec(aggRate(posts, 'signups', 'views', CONV_DEN)), { text: `${nf.format(sumk('signups'))} altas en total` }),
+      tile(T.tViewsPer100, dec(aggRate(posts, 'views', 'delivered', REACH_DEN)), { text: T.overSends(nf.format(posts.reduce((a, x) => a + (x.delivered || 0), 0))) }),
+      tile(T.tOpenAvg, pf(openRate), { text: T.ctrAvg(pf(ctr)) }),
+      tile(T.tReactionsPer100, dec(aggRate(posts, 'reactions', 'views', ENG_DEN)), { text: T.commentsPer100(dec(aggRate(posts, 'comments', 'views', ENG_DEN))) }),
+      tile(T.tSignupsPer1000, dec(aggRate(posts, 'signups', 'views', CONV_DEN)), { text: T.totalSignups(nf.format(sumk('signups'))) }),
     ]) : head.concat([
-      tile('Vistas últimos 30 días', nf.format(s.views ?? 0), s.viewsDelta != null ? { text: `${s.viewsDelta > 0 ? '+' : '−'}${nf.format(Math.abs(s.viewsDelta))} vs 30 días antes`, cls: s.viewsDelta > 0 ? 'up' : s.viewsDelta < 0 ? 'down' : '' } : null),
-      tile('Vistas por post (media)', avg('views') == null ? '—' : nf.format(Math.round(avg('views'))), { text: `${nf.format(sumk('views'))} vistas en total` }),
-      tile('Tasa de apertura media', pf(openRate), { text: `CTR medio ${pf(ctr)}` }),
-      tile('Reacciones por post', avg('reactions') == null ? '—' : avg('reactions').toFixed(1).replace('.', ','), { text: `${nf.format(sumk('comments'))} comentarios` }),
-      tile('Altas atribuidas a posts', nf.format(sumk('signups')), { text: `${nf.format(sumk('unsubscribes'))} bajas` }),
+      tile(T.tViews30, nf.format(s.views ?? 0), s.viewsDelta != null ? { text: T.vsPrev30(`${s.viewsDelta > 0 ? '+' : '−'}${nf.format(Math.abs(s.viewsDelta))}`), cls: s.viewsDelta > 0 ? 'up' : s.viewsDelta < 0 ? 'down' : '' } : null),
+      tile(T.tViewsPerPostAvg, avg('views') == null ? '—' : nf.format(Math.round(avg('views'))), { text: T.totalViews(nf.format(sumk('views'))) }),
+      tile(T.tOpenAvg, pf(openRate), { text: T.ctrAvg(pf(ctr)) }),
+      tile(T.tReactionsPerPost, avg('reactions') == null ? '—' : dec(avg('reactions')), { text: T.comments(nf.format(sumk('comments'))) }),
+      tile(T.tSignups, nf.format(sumk('signups')), { text: T.unsubs(nf.format(sumk('unsubscribes'))) }),
     ])).join('');
   }
 
@@ -460,9 +653,9 @@
     const serie = (p.history?.subscribers?.length || 0) > p.subscribers_ts.length ? p.history.subscribers : p.subscribers_ts;
     let ts = serie.map(([d, v]) => ({ t: new Date(String(d).replace(/\//g, '-')).getTime(), v })).filter(x => !isNaN(x.t));
     if (state.days) ts = ts.filter(x => x.t >= cutoff());
-    $('#subs-sub').textContent = ts.length ? `Del ${dfs(ts[0].t)} al ${dfs(ts[ts.length - 1].t)}` : '';
-    $('#subs-table').innerHTML = ts.length ? `<table><thead><tr><th class="t">Fecha</th><th>Suscriptores</th></tr></thead><tbody>${ts.filter((_, i) => i % 7 === 0 || i === ts.length - 1).map(x => `<tr><td class="t">${df(x.t)}</td><td>${nf.format(x.v)}</td></tr>`).join('')}</tbody></table>` : '';
-    if (ts.length < 2) { box.innerHTML = '<div class="empty">Sin serie temporal para este rango.</div>'; return; }
+    $('#subs-sub').textContent = ts.length ? T.fromTo(dfs(ts[0].t), dfs(ts[ts.length - 1].t)) : '';
+    $('#subs-table').innerHTML = ts.length ? `<table><thead><tr><th class="t">${T.date}</th><th>${T.subscribers}</th></tr></thead><tbody>${ts.filter((_, i) => i % 7 === 0 || i === ts.length - 1).map(x => `<tr><td class="t">${df(x.t)}</td><td>${nf.format(x.v)}</td></tr>`).join('')}</tbody></table>` : '';
+    if (ts.length < 2) { box.innerHTML = `<div class="empty">${T.noSeries}</div>`; return; }
     const W = width('#subs-chart'), H = 220, m = { t: 12, r: 16, b: 28, l: 44 };
     const svg = svgEl(W, H);
     const vmin = Math.min(...ts.map(x => x.v)), vmax = Math.max(...ts.map(x => x.v));
@@ -481,7 +674,7 @@
     const cross = el('line', { y1: m.t, y2: H - m.b, class: 'crosshair', visibility: 'hidden' }); svg.appendChild(cross);
     const hdot = el('circle', { r: 4, class: 'dot', visibility: 'hidden' }); svg.appendChild(hdot);
     const hit = el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, class: 'hit' }); svg.appendChild(hit);
-    hit.addEventListener('mousemove', e => { const r = svg.getBoundingClientRect(); const px = (e.clientX - r.left) * W / r.width; let best = ts[0]; for (const d of ts) if (Math.abs(x(d.t) - px) < Math.abs(x(best.t) - px)) best = d; cross.setAttribute('x1', x(best.t)); cross.setAttribute('x2', x(best.t)); cross.setAttribute('visibility', 'visible'); hdot.setAttribute('cx', x(best.t)); hdot.setAttribute('cy', y(best.v)); hdot.setAttribute('visibility', 'visible'); showTip(`<b>${df(best.t)}</b>${nf.format(best.v)} suscriptores`, e.clientX, e.clientY); });
+    hit.addEventListener('mousemove', e => { const r = svg.getBoundingClientRect(); const px = (e.clientX - r.left) * W / r.width; let best = ts[0]; for (const d of ts) if (Math.abs(x(d.t) - px) < Math.abs(x(best.t) - px)) best = d; cross.setAttribute('x1', x(best.t)); cross.setAttribute('x2', x(best.t)); cross.setAttribute('visibility', 'visible'); hdot.setAttribute('cx', x(best.t)); hdot.setAttribute('cy', y(best.v)); hdot.setAttribute('visibility', 'visible'); showTip(`<b>${df(best.t)}</b>${nf.format(best.v)} ${T.uSubscribers}`, e.clientX, e.clientY); });
     hit.addEventListener('mouseleave', () => { cross.setAttribute('visibility', 'hidden'); hdot.setAttribute('visibility', 'hidden'); hideTip(); });
     box.appendChild(svg);
   }
@@ -490,7 +683,7 @@
   function renderSources() {
     const p = pub(), box = $('#sources-chart'); box.innerHTML = '';
     const rows = p.growth_sources.map(r => ({ label: r.label || '?', v: +(r.subscribers || 0), traffic: +(r.traffic || 0), children: r.children || [] })).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
-    if (!rows.length) { box.innerHTML = '<div class="empty">Sin datos de fuentes.</div>'; return; }
+    if (!rows.length) { box.innerHTML = `<div class="empty">${T.noSources}</div>`; return; }
     const top = rows.slice(0, 7); if (rows.length > 7) top.push({ label: 'Otros', v: rows.slice(7).reduce((a, r) => a + r.v, 0) });
     const W = width('#sources-chart'), rowH = 26, m = { l: 130, r: 44 }, H = top.length * rowH + 8, max = Math.max(...top.map(r => r.v));
     const svg = svgEl(W, H);
@@ -500,7 +693,7 @@
       svg.appendChild(el('path', { d: `M${m.l},${yy + 3} h${Math.max(0, w - 4)} a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h${-Math.max(0, w - 4)} z`, class: 'bar' }));
       svg.appendChild(el('text', { x: m.l + w + 6, y: yy + 15, class: 'dlabel' }, nf.format(r.v)));
       const hit = el('rect', { x: 0, y: yy, width: W, height: rowH, class: 'hit' }); svg.appendChild(hit);
-      hit.addEventListener('mousemove', e => showTip(`<b>${esc(r.label)}</b>${nf.format(r.v)} suscriptores · ${nf.format(r.traffic || 0)} visitas${(r.children || []).filter(c => c.subscribers > 0).slice(0, 4).map(c => `<br>· ${esc(c.label.slice(0, 40))}: ${nf.format(c.subscribers)}`).join('')}`, e.clientX, e.clientY)); hit.addEventListener('mouseleave', hideTip);
+      hit.addEventListener('mousemove', e => showTip(`<b>${esc(r.label)}</b>${T.subsAndTraffic(nf.format(r.v), nf.format(r.traffic || 0))}${(r.children || []).filter(c => c.subscribers > 0).slice(0, 4).map(c => `<br>· ${esc(c.label.slice(0, 40))}: ${nf.format(c.subscribers)}`).join('')}`, e.clientX, e.clientY)); hit.addEventListener('mouseleave', hideTip);
     });
     box.appendChild(svg);
   }
@@ -513,12 +706,12 @@
     const mv = (p) => rel ? relOf(p).views_rel : p.views;
     const fmtv = (v) => v == null ? '—' : rel ? dec(v) : nf.format(Math.round(v));
     const avgTxt = posts.length ? (isRel() ? aggRate(posts, 'views', 'delivered', REACH_DEN) : posts.reduce((a, x) => a + x.views, 0) / posts.length) : null;
-    const avgLbl = avgTxt == null ? '' : ` Línea gris: media (${rel ? dec(avgTxt) : nf.format(Math.round(avgTxt))}).`;
+    const avgLbl = avgTxt == null ? '' : T.greyLineAvg(rel ? dec(avgTxt) : nf.format(Math.round(avgTxt)));
     $('#views-sub').textContent = posts.length ? (rel
-      ? `${posts.length} posts, orden cronológico. Vistas por cada 100 suscriptores que recibieron el envío.${avgLbl}`
-      : `${posts.length} posts, orden cronológico.${avgLbl} En naranja, los 3 más vistos.`) : '';
-    $('#views-legend').innerHTML = posts.length ? `<span><i style="background:var(--s1)"></i>${rel ? 'Vistas por 100 suscriptores' : 'Vistas del post'}</span><span><i style="background:var(--s2)"></i>Top 3</span>` : '';
-    if (!posts.length) { box.innerHTML = '<div class="empty">No hay posts en este rango.</div>'; return; }
+      ? T.chrono(posts.length) + T.viewsPer100Explain + avgLbl
+      : T.chrono(posts.length) + avgLbl + T.topThreeNote) : '';
+    $('#views-legend').innerHTML = posts.length ? `<span><i style="background:var(--s1)"></i>${rel ? T.viewsPer100 : T.legendPostViews}</span><span><i style="background:var(--s2)"></i>${T.legendTop3}</span>` : '';
+    if (!posts.length) { box.innerHTML = `<div class="empty">${T.noPostsRange}</div>`; return; }
     const top3 = new Set(posts.slice().sort((a, b) => (mv(b) ?? -1) - (mv(a) ?? -1)).slice(0, 3).map(p => p.id));
     const W = width('#views-chart'), H = 240, m = { t: 12, r: 12, b: 30, l: 44 };
     const svg = svgEl(W, H);
@@ -537,7 +730,7 @@
       if (top3.has(p.id) && bw >= 10 && h > 0) svg.appendChild(el('text', { x: cx, y: y(v) - 5, 'text-anchor': 'middle', class: 'dlabel' }, fmtv(mv(p))));
       const hit = el('rect', { x: m.l + slot * i, y: m.t, width: slot, height: H - m.t - m.b, class: 'hit' }); svg.appendChild(hit);
       const rp = relOf(p);
-      hit.addEventListener('mousemove', e => showTip(`<b>${esc(p.title)}</b>${df(p.date)}<br>${nf.format(p.views)} vistas${p.delivered ? ` · ${dec(rp.views_rel)} por 100 sus. (${nf.format(p.delivered)} entregados)` : ' · no enviado por email'}<br>apertura ${p.delivered ? pf(p.open_rate) : '—'} · ${p.reactions} reacc. (${dec(rp.reactions_rel)} por 100 vistas)`, e.clientX, e.clientY));
+      hit.addEventListener('mousemove', e => showTip(`<b>${esc(p.title)}</b>${df(p.date)}<br>${nf.format(p.views)} ${T.uViews}${p.delivered ? T.perHundredSubs(dec(rp.views_rel), nf.format(p.delivered)) : ' · ' + T.notEmailed}<br>${T.tipOpen(p.delivered ? pf(p.open_rate) : '—')} · ${T.tipReactions(p.reactions, dec(rp.reactions_rel))}`, e.clientX, e.clientY));
       hit.addEventListener('mouseleave', hideTip);
       hit.addEventListener('click', () => { openDetail(p.id, true); });
     });
@@ -547,33 +740,33 @@
 
   // ---------- table ----------
   const COLS_ABS = [
-    { key: 'title', label: 'Post', t: true },
-    { key: 'views', label: 'Vistas' },
-    { key: 'vs', label: 'vs media', title: 'Vistas frente a la media de posts comparables (según Substack)' },
-    { key: 'open_rate', label: 'Apertura' },
+    { key: 'title', label: T.cPost, t: true },
+    { key: 'views', label: T.mViews },
+    { key: 'vs', label: T.cVsAvg, title: T.cVsAvgTitle },
+    { key: 'open_rate', label: T.mOpen },
     { key: 'ctr', label: 'CTR' },
-    { key: 'reactions', label: 'Reacc.' },
-    { key: 'comments', label: 'Coment.' },
-    { key: 'shares', label: 'Compart.' },
-    { key: 'signups', label: 'Altas' },
-    { key: 'delivered', label: 'Entregados' },
+    { key: 'reactions', label: T.cReactions },
+    { key: 'comments', label: T.cComments },
+    { key: 'shares', label: T.cShares },
+    { key: 'signups', label: T.mSignups },
+    { key: 'delivered', label: T.cDelivered },
   ];
   const COLS_REL = [
-    { key: 'title', label: 'Post', t: true },
-    { key: 'delivered', label: 'Audiencia', title: 'Suscriptores que recibieron este envío. Es el denominador del alcance.' },
-    { key: 'views_rel', label: 'Vistas/100 sus.', title: 'Vistas por cada 100 suscriptores que recibieron el envío' },
-    { key: 'vs', label: 'vs media', title: 'Vistas frente a la media de posts comparables (según Substack)' },
-    { key: 'open_rate', label: 'Apertura' },
+    { key: 'title', label: T.cPost, t: true },
+    { key: 'delivered', label: T.cAudience, title: T.cAudienceTitle },
+    { key: 'views_rel', label: T.cViewsPer100, title: T.cViewsPer100Title },
+    { key: 'vs', label: T.cVsAvg, title: T.cVsAvgTitle },
+    { key: 'open_rate', label: T.mOpen },
     { key: 'ctr', label: 'CTR' },
-    { key: 'reactions_rel', label: 'Reacc./100 vistas' },
-    { key: 'comments_rel', label: 'Coment./100 vistas' },
-    { key: 'signups_rel', label: 'Altas/1.000 vistas' },
+    { key: 'reactions_rel', label: T.cReactionsPer100 },
+    { key: 'comments_rel', label: T.cCommentsPer100 },
+    { key: 'signups_rel', label: T.cSignupsPer1000 },
   ];
   const COLS = () => isRel() ? COLS_REL : COLS_ABS;
   const REL_KEYS = new Set(['views_rel', 'reactions_rel', 'comments_rel', 'signups_rel']);
   const cellOf = (p, key) => {
-    if (key === 'title') return `<td class="t"><div class="title">${esc(p.title)}${p.audience === 'only_paid' ? '<span class="badge">de pago</span>' : ''}${p.type !== 'newsletter' ? `<span class="badge">${esc(p.type)}</span>` : ''}</div><div class="date">${df(p.date)}</div></td>`;
-    if (key === 'vs') return `<td><span class="vs ${p.vs == null ? '' : p.vs >= 0 ? 'up' : 'down'}">${p.vs == null ? '—' : (p.vs >= 0 ? '+' : '−') + Math.abs(Math.round(p.vs * 100)) + ' %'}</span></td>`;
+    if (key === 'title') return `<td class="t"><div class="title">${esc(p.title)}${p.audience === 'only_paid' ? `<span class="badge">${T.badgePaid}</span>` : ''}${p.type !== 'newsletter' ? `<span class="badge">${esc(p.type)}</span>` : ''}</div><div class="date">${df(p.date)}</div></td>`;
+    if (key === 'vs') return `<td><span class="vs ${p.vs == null ? '' : p.vs >= 0 ? 'up' : 'down'}">${pctSigned(p.vs)}</span></td>`;
     if (key === 'open_rate' || key === 'ctr') return `<td>${p.delivered ? pf(p[key]) : '—'}</td>`;
     if (REL_KEYS.has(key)) return `<td>${dec(p[key])}</td>`;
     return `<td>${nf.format(p[key] || 0)}</td>`;
@@ -584,13 +777,13 @@
     const { key, dir } = state.sort;
     posts.sort((a, b) => { let va = a[key], vb = b[key]; if (key === 'title') { va = (va || '').toLowerCase(); vb = (vb || '').toLowerCase(); return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va); } if (key === 'date') { va = new Date(a.date); vb = new Date(b.date); } va = va ?? -Infinity; vb = vb ?? -Infinity; return dir === 'asc' ? va - vb : vb - va; });
     const cols = COLS();
-    $('#posts-sub').textContent = `${posts.length} posts${isRel() ? ', métricas normalizadas por audiencia' : ''}. Haz clic en una columna para ordenar y en un post para ver el detalle.`;
+    $('#posts-sub').textContent = T.postsSub(posts.length, isRel() ? T.normalisedShort : '');
     $('#posts thead').innerHTML = `<tr>${cols.map(c => `<th class="${c.t ? 't' : ''}" data-key="${c.key}" ${c.title ? `title="${c.title}"` : ''} aria-sort="${key === c.key || (c.key === 'title' && key === 'date') ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}">${c.label}</th>`).join('')}</tr>`;
     $('#posts thead').onclick = e => { const th = e.target.closest('th'); if (!th) return; let k = th.dataset.key; if (k === 'title') k = state.sort.key === 'date' ? 'title' : 'date'; state.sort = { key: k, dir: state.sort.key === k && state.sort.dir === 'desc' ? 'asc' : 'desc' }; renderTable(); };
     $('#posts tbody').innerHTML = posts.length
       ? posts.map(p => `<tr data-id="${p.id}"${p.id === state.selected ? ' class="selected"' : ''}>${cols.map(c => cellOf(p, c.key)).join('')}</tr>`
           + (p.id === state.selected ? `<tr class="detailrow" data-detail="${p.id}"><td colspan="${cols.length}"><div class="detailbox">${detailHtml(p)}</div></td></tr>` : '')).join('')
-      : `<tr><td colspan="${cols.length}" class="empty">No hay posts en este rango.</td></tr>`;
+      : `<tr><td colspan="${cols.length}" class="empty">${T.noPostsRange}</td></tr>`;
     wireDetail();
     $('#posts tbody').onclick = e => { const tr = e.target.closest('tr[data-id]'); if (!tr) return; openDetail(state.selected === +tr.dataset.id ? null : +tr.dataset.id); };
   }
@@ -610,47 +803,47 @@
   function detailHtml(p) {
     const vs = vsOf(p), r = relOf(p);
     const stat = (l, v, n) => `<div class="dstat"><div class="l">${l}</div><div class="v">${v}</div>${n ? `<div class="n">${n}</div>` : ''}</div>`;
-    const tags = [p.audience === 'only_paid' ? 'solo de pago' : 'para todos', p.type !== 'newsletter' ? p.type : null].filter(Boolean).join(' · ');
+    const tags = [p.audience === 'only_paid' ? T.audPaid : T.audEveryone, p.type !== 'newsletter' ? p.type : null].filter(Boolean).join(' · ');
     const refs = (p.referrers || []).slice(0, 6);
     const links = (p.links || []).slice(0, 6);
     const daily = p.daily || [];
     const evo = (pub().history?.posts?.[p.id] || []);
-    const evoHtml = evo.length < 2 ? '' : `<section><h4>Evolución entre sincronizaciones</h4>${evo.slice(-6).map(([t, v], i, a) => { const prev = a[i - 1], d = prev ? v - prev[1] : null; return `<div class="linkrow"><span>${new Date(t).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</span><span>${nf.format(v)} vistas${d ? ` <b class="vs ${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '+' : '−'}${nf.format(Math.abs(d))}</b>` : ''}</span></div>`; }).join('')}</section>`;
+    const evoHtml = evo.length < 2 ? '' : `<section><h4>${T.secEvolution}</h4>${evo.slice(-6).map(([t, v], i, a) => { const prev = a[i - 1], d = prev ? v - prev[1] : null; return `<div class="linkrow"><span>${new Date(t).toLocaleDateString(LOCALE, { day: '2-digit', month: 'short' })}</span><span>${nf.format(v)} ${T.uViews}${d ? ` <b class="vs ${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '+' : '−'}${nf.format(Math.abs(d))}</b>` : ''}</span></div>`; }).join('')}</section>`;
     return `
       <div class="dhead">
         <div>
           <h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}</a></h3>
           <div class="sub">${df(p.date)} · ${esc(tags)}</div>
         </div>
-        <button class="btn" id="detail-close">Cerrar</button>
+        <button class="btn" id="detail-close">${T.close}</button>
       </div>
       <div class="dstats">${[
-        stat('Vistas', nf.format(p.views), vs == null ? `${nf.format(p.delivered)} entregados` : `${vs >= 0 ? '+' : '−'}${Math.abs(Math.round(vs * 100))} % vs comparables`),
-        stat('Apertura', p.delivered ? pf(p.open_rate) : '—', p.delivered ? `${nf.format(p.opened)} de ${nf.format(p.delivered)}` : 'no enviado por email'),
-        stat('CTR', p.delivered ? pf(p.ctr) : '—', `${nf.format(p.clicked)} clics únicos`),
-        stat('Reacciones', nf.format(p.reactions), `${nf.format(p.comments)} coment. · ${nf.format(p.shares)} compart.`),
-        stat('Altas', nf.format(p.signups), `${p.signups_1d} en 24 h · ${p.unsubscribes} bajas`),
+        stat(T.mViews, nf.format(p.views), vs == null ? T.deliveredN(nf.format(p.delivered)) : T.vsComparables(pctSigned(vs))),
+        stat(T.mOpen, p.delivered ? pf(p.open_rate) : '—', p.delivered ? T.ofN(nf.format(p.opened), nf.format(p.delivered)) : T.notEmailed),
+        stat('CTR', p.delivered ? pf(p.ctr) : '—', T.uniqueClicks(nf.format(p.clicked))),
+        stat(T.mReactions, nf.format(p.reactions), T.commentsShares(nf.format(p.comments), nf.format(p.shares))),
+        stat(T.mSignups, nf.format(p.signups), T.signupsNote(p.signups_1d, p.unsubscribes)),
       ].join('')}</div>
-      <div class="dcaption">Normalizado por audiencia</div>
+      <div class="dcaption">${T.normalisedCaption}</div>
       <div class="dstats">${[
-        stat('Vistas / 100 sus.', dec(r.views_rel), 'alcance sobre el envío'),
-        stat('Reacc. / 100 vistas', dec(r.reactions_rel), 'interacción sobre el alcance'),
-        stat('Altas / 1.000 vistas', dec(r.signups_rel), 'conversión sobre el tráfico'),
-        p.comps ? stat('Vistas de posts comparables', nf.format(Math.round(p.comps.views || 0)), `apertura ${pf(p.comps.open_rate)} · sobre ${p.comps.n} posts`) : '',
+        stat(T.dViewsPer100, dec(r.views_rel), T.reachOverSend),
+        stat(T.dReactionsPer100, dec(r.reactions_rel), T.engagementOverReach),
+        stat(T.dSignupsPer1000, dec(r.signups_rel), T.conversionOverTraffic),
+        p.comps ? stat(T.dComparable, nf.format(Math.round(p.comps.views || 0)), T.comparableNote(pf(p.comps.open_rate), p.comps.n)) : '',
       ].join('')}</div>
       <hr class="dsep">
       <div class="dcols">
         <section>
-          <h4>De dónde vienen las vistas</h4>
-          ${refs.length ? refs.map(s => { const pct = Math.max(0, Math.min(1, +s.percent_of_total_views || 0)); return `<div class="srcrow"><div class="t"><span>${esc(s.source)}</span><span>${nf.format(s.views)} · ${pf(pct, 0)}</span></div><div class="srcbar"><i style="width:${(pct * 100).toFixed(1)}%"></i></div></div>`; }).join('') : '<div class="dempty">Sin datos de origen.</div>'}
+          <h4>${T.secSources}</h4>
+          ${refs.length ? refs.map(s => { const pct = Math.max(0, Math.min(1, +s.percent_of_total_views || 0)); return `<div class="srcrow"><div class="t"><span>${esc(s.source)}</span><span>${nf.format(s.views)} · ${pf(pct, 0)}</span></div><div class="srcbar"><i style="width:${(pct * 100).toFixed(1)}%"></i></div></div>`; }).join('') : `<div class="dempty">${T.noOrigin}</div>`}
         </section>
         <section>
-          <h4>Primera semana (vistas al día)</h4>
-          ${daily.length ? '<div id="daily-chart"></div>' : '<div class="dempty">Sin datos diarios.</div>'}
+          <h4>${T.secWeek}</h4>
+          ${daily.length ? '<div id="daily-chart"></div>' : `<div class="dempty">${T.noDaily}</div>`}
         </section>
         <section>
-          <h4>Enlaces más clicados</h4>
-          ${links.length ? links.map(([u, c]) => `<div class="linkrow"><span title="${esc(u)}">${esc(String(u).replace(/^https?:\/\//, ''))}</span><span>${nf.format(c)}</span></div>`).join('') : '<div class="dempty">Sin clics registrados.</div>'}
+          <h4>${T.secLinks}</h4>
+          ${links.length ? links.map(([u, c]) => `<div class="linkrow"><span title="${esc(u)}">${esc(String(u).replace(/^https?:\/\//, ''))}</span><span>${nf.format(c)}</span></div>`).join('') : `<div class="dempty">${T.noClicks}</div>`}
         </section>
         ${evoHtml}
       </div>`
@@ -690,10 +883,10 @@
       logEl.textContent = (s.log || []).join('\n');
       if (running) { logEl.scrollTop = logEl.scrollHeight; }
       st.className = 'syncstate' + (s.lastResult === 'error' && !running ? ' err' : '');
-      st.textContent = running ? (s.running === 'login' ? 'Esperando a que inicies sesión en la ventana de Chrome…' : s.running === 'build' ? 'Generando el panel…' : 'Sincronizando… ' + ((s.log || []).slice(-1)[0] || ''))
-        : s.lastResult === 'error' ? 'La última operación falló. Revisa el registro.'
-        : s.lastSync ? 'Última sincronización: ' + new Date(s.lastSync).toLocaleString('es-ES') + (s.lastSource === 'extension' ? ' (extensión de Chrome)' : '') + (s.session === 'none' ? ' · sin sesión de Playwright: usa la extensión de Chrome' : '')
-        : s.session === 'none' ? 'Sin sesión: usa la extensión de Chrome o inicia sesión.' : 'Sin sincronizar todavía.';
+      st.textContent = running ? (s.running === 'login' ? T.syncWaitLogin : s.running === 'build' ? T.syncBuilding : T.syncing + ((s.log || []).slice(-1)[0] || ''))
+        : s.lastResult === 'error' ? T.syncFailed
+        : s.lastSync ? T.lastSync + new Date(s.lastSync).toLocaleString(LOCALE) + (s.lastSource === 'extension' ? T.viaExtension : '') + (s.session === 'none' ? T.noPlaywright : '')
+        : s.session === 'none' ? T.noSession : T.neverSynced;
       if (wasRunning && !running && s.lastResult === 'ok' && s.running !== 'login') { location.reload(); return; }
       if (!running && s.lastSync && lastSeen && s.lastSync !== lastSeen) { location.reload(); return; }
       lastSeen = s.lastSync;
@@ -701,7 +894,7 @@
       clearTimeout(timer); timer = setTimeout(poll, running ? 1500 : 10000);
     };
     const poll = async () => { try { paint(await (await fetch('/api/status', { cache: 'no-store' })).json()); } catch { bar.hidden = true; } };
-    const call = async (path) => { const r = await fetch(path, { method: 'POST' }); if (r.status === 409) st.textContent = 'Ya hay una operación en marcha.'; wasRunning = true; clearTimeout(timer); timer = setTimeout(poll, 800); };
+    const call = async (path) => { const r = await fetch(path, { method: 'POST' }); if (r.status === 409) st.textContent = T.alreadyRunning; wasRunning = true; clearTimeout(timer); timer = setTimeout(poll, 800); };
     syncBtn.onclick = () => call('/api/sync');
     loginBtn.onclick = () => call('/api/login');
     poll();

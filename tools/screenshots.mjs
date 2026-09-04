@@ -19,8 +19,10 @@ const page = await browser.newPage({
   viewport: { width: 1400, height: 1180 },
   deviceScaleFactor: 2,
   colorScheme: 'light',
+  locale: 'en-US',
 });
-await page.goto('file://' + DEMO, { waitUntil: 'load' });
+// ?lang=en: el repositorio está en inglés, así que las imágenes también.
+await page.goto('file://' + DEMO + '?lang=en', { waitUntil: 'load' });
 await page.waitForTimeout(600);
 
 // Resalta un elemento con un recuadro rojo y una etiqueta, para que en el README se vea
@@ -67,13 +69,13 @@ const shot = async (name) => {
 };
 
 // 1. Comparativa, métricas absolutas (vista por defecto)
-await annotate('#mode button[data-mode="abs"]', 'Modo: cifras absolutas');
+await annotate('#mode button[data-mode="abs"]', 'Mode: absolute figures');
 await shot('comparison-absolute.png');
 await clearAnnotations();
 
 // 2. Comparativa, métricas relativas: mismo dato, normalizado por audiencia
 await page.click('#mode button[data-mode="rel"]');
-await annotate('#mode button[data-mode="rel"]', 'Modo: normalizado por audiencia');
+await annotate('#mode button[data-mode="rel"]', 'Mode: normalised by audience');
 await shot('comparison-relative.png');
 await clearAnnotations();
 

@@ -47,8 +47,8 @@ def derive(h):
     # 4. Fuera la barra de sincronización de la cabecera.
     bar = """    <div class="syncbar" id="syncbar" hidden>
       <span class="syncstate" id="syncstate"></span>
-      <button class="btn" id="login-btn" hidden>Iniciar sesión en Substack</button>
-      <button class="btn primary" id="sync-btn">Sincronizar</button>
+      <button class="btn" id="login-btn" data-i18n="signIn" hidden></button>
+      <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
     </div>
   </header>
   <pre class="synclog" id="synclog" hidden></pre>"""
