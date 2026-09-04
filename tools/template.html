@@ -137,7 +137,10 @@
   .cpath:hover { stroke: var(--ink); stroke-width: 1; }
   .maplegend { display: flex; align-items: center; gap: 7px; margin-top: 10px; font-size: 11px; color: var(--muted); }
   .maplegend i { display: block; width: 26px; height: 9px; border-radius: 2px; }
-  .credit { margin: 28px 0 0; text-align: center; font-size: 11px; color: var(--muted); }
+  .credit { margin: 28px 0 10px; text-align: center; font-size: 11px; color: var(--muted); }
+  .bmc { display: inline-flex; align-items: center; gap: 7px; margin: 0 auto 30px; padding: 8px 16px; border-radius: 8px; background: #ffdd00; color: #000; font-size: 13px; font-weight: 600; text-decoration: none; }
+  .bmc:hover { filter: brightness(.97); }
+  .credwrap { text-align: center; }
   .credit a { color: inherit; }
   .relnote { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--s1); border-radius: 8px; padding: 9px 13px; margin: 0 0 12px; font-size: 12px; color: var(--ink-2); }
   .syncbar { display: flex; align-items: center; gap: 10px; margin-left: auto; }
@@ -248,7 +251,10 @@
       <div class="tablewrap"><table id="notes-table"><thead></thead><tbody></tbody></table></div>
     </div>
   </div>
-  <footer class="credit"><span data-i18n="creditPre"></span> <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a><span data-i18n="creditPost"></span></footer>
+  <div class="credwrap">
+    <footer class="credit"><span data-i18n="creditPre"></span> <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a><span data-i18n="creditPost"></span></footer>
+    <a class="bmc" href="https://buymeacoffee.com/polmarza" target="_blank" rel="noopener">☕ <span data-i18n="buyCoffee"></span></a>
+  </div>
 </div>
 <div class="tooltip" id="tip" hidden></div>
 <script id="data" type="application/json">/*__DATA__*/null</script>
@@ -274,7 +280,7 @@
       modeLabel: 'Tipo de métrica', absolute: 'Absolutas', relative: 'Relativas',
       searchPosts: 'Buscar post…',
       relNote: 'Un post antiguo se publicó a una lista más pequeña, así que las cifras absolutas premian a los recientes solo porque la audiencia ha crecido. En modo relativo el alcance se divide entre los suscriptores que recibieron ese envío y la interacción entre las vistas del propio post, de modo que todos se comparan en igualdad. Las clasificaciones dejan fuera los casos con menos de 30 de audiencia o de vistas, porque con un denominador tan pequeño la proporción se dispara.',
-      creditPre: 'Generado con', creditPost: ', de Pol Marzà · MIT',
+      creditPre: 'Generado con', creditPost: ', de Pol Marzà · MIT', buyCoffee: 'Invítame a un café',
       publications: 'Publicaciones', subscribers: 'Suscriptores', subsPerPub: 'Total actual por publicación',
       viewsPerPost: 'Vistas por post', viewsPer100: 'Vistas por 100 suscriptores',
       openRate: 'Tasa de apertura', openRateSub: 'Media de los posts enviados por email',
@@ -376,7 +382,7 @@
       modeLabel: 'Metric type', absolute: 'Absolute', relative: 'Relative',
       searchPosts: 'Search posts…',
       relNote: 'An older post went out to a smaller list, so raw counts flatter recent ones simply because the audience grew. In relative mode reach is divided by the subscribers who received that send, and engagement by the post’s own views, so every post is compared on equal terms. Rankings leave out anything below 30 in audience or views, because a denominator that small sends the ratio through the roof.',
-      creditPre: 'Generated with', creditPost: ' by Pol Marzà · MIT',
+      creditPre: 'Generated with', creditPost: ' by Pol Marzà · MIT', buyCoffee: 'Buy me a coffee',
       publications: 'Publications', subscribers: 'Subscribers', subsPerPub: 'Current total per publication',
       viewsPerPost: 'Views per post', viewsPer100: 'Views per 100 subscribers',
       openRate: 'Open rate', openRateSub: 'Average across posts sent by email',

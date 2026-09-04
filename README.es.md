@@ -107,7 +107,7 @@ Usa la sesión de Substack que ya tienes en tu Chrome normal, así que no hay se
 2. Elige la carpeta `extension/`.
 3. Con `npm start` en marcha, pulsa el icono de la extensión y **Sincronizar todas las publicaciones**.
 
-Solo habla con `*.substack.com` (lectura) y con tu `127.0.0.1:8787`. La cookie nunca sale del navegador.
+Abre una pestaña efímera en segundo plano en cada una de tus publicaciones, ejecuta ahí el mismo recolector de solo lectura y envía el resultado a tu `127.0.0.1:8787`. No habla con nada más, y la cookie de sesión nunca sale del navegador. (Funciona así, inyectando en una pestaña real en vez de pedir los datos desde el service worker, porque la cookie de sesión de Substack no viaja de forma fiable desde el contexto de fondo de una extensión.)
 
 ---
 

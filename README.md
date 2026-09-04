@@ -107,7 +107,7 @@ Uses the Substack session already in your normal Chrome, so there is no second l
 2. Select the `extension/` folder.
 3. With `npm start` running, click the extension icon and **Sync all publications**.
 
-It only talks to `*.substack.com` (read-only) and your own `127.0.0.1:8787`. The cookie never leaves your browser.
+It opens a short-lived background tab on each of your publications, runs the same read-only collector there, and posts the result to your own `127.0.0.1:8787`. It talks to nothing else, and the session cookie never leaves your browser. (It works this way — injecting into a real tab rather than fetching from the worker — because Substack's session cookie is not sent reliably from an extension's background context.)
 
 ---
 

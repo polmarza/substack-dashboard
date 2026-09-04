@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8">
+<html lang="en"><head><meta charset="utf-8">
 <style>
   body { width: 320px; margin: 0; padding: 14px; font: 13px/1.45 system-ui, -apple-system, sans-serif; color: #0b0b0b; background: #fcfcfb; }
   h1 { font-size: 14px; margin: 0 0 8px; }
@@ -10,12 +10,15 @@
   #status { margin-top: 10px; color: #52514e; white-space: pre-wrap; max-height: 220px; overflow: auto; font-size: 12px; }
   #status.err { color: #d03b3b; }
   .hint { margin-top: 10px; font-size: 11px; color: #898781; }
+  .bmc { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; padding: 8px 12px; border-radius: 8px; background: #ffdd00; color: #000; font-weight: 600; text-decoration: none; }
+  .bmc:hover { filter: brightness(.97); }
 </style></head>
 <body>
-  <h1>Panel Substack</h1>
-  <button id="sync">Sincronizar todas las publicaciones</button>
-  <div class="row"><button id="open" class="secondary">Abrir el panel</button></div>
+  <h1>Substack Dashboard</h1>
+  <button id="sync">Sync all publications</button>
+  <div class="row"><button id="open" class="secondary">Open the dashboard</button></div>
   <div id="status"></div>
-  <div class="hint">Usa tu sesión de Substack en este Chrome. El servidor del panel debe estar en marcha (npm start).</div>
+  <div class="hint">Uses your Substack session in this Chrome. It briefly opens a background tab per publication to collect the data. The dashboard server must be running (npm start).</div>
+  <a class="bmc" id="bmc" href="https://buymeacoffee.com/polmarza" target="_blank" rel="noopener">☕ Buy me a coffee</a>
   <script src="popup.js"></script>
 </body></html>

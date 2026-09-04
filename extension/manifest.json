@@ -1,10 +1,36 @@
 {
   "manifest_version": 3,
-  "name": "Panel Substack: sincronizar",
-  "version": "1.0.0",
-  "description": "Descarga las estadísticas de tus publicaciones de Substack con tu sesión de Chrome y las envía al panel local (127.0.0.1:8787).",
-  "action": { "default_popup": "popup.html", "default_title": "Panel Substack" },
-  "background": { "service_worker": "background.js" },
-  "permissions": ["storage"],
-  "host_permissions": ["https://*.substack.com/*", "http://127.0.0.1:8787/*", "http://localhost:8787/*"]
+  "name": "Substack Dashboard sync",
+  "version": "1.2.0",
+  "description": "Collects your Substack publication stats using your Chrome session and sends them to the local dashboard (127.0.0.1:8787).",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Substack Dashboard",
+    "default_icon": {
+      "16": "icon-16.png",
+      "32": "icon-32.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.substack.com/*",
+    "https://substack.com/*",
+    "http://127.0.0.1:8787/*",
+    "http://localhost:8787/*"
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
 }
