@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Panel Substack: sincronizar",
+  "version": "1.0.0",
+  "description": "Descarga las estadísticas de tus publicaciones de Substack con tu sesión de Chrome y las envía al panel local (127.0.0.1:8787).",
+  "action": { "default_popup": "popup.html", "default_title": "Panel Substack" },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["storage"],
+  "host_permissions": ["https://*.substack.com/*", "http://127.0.0.1:8787/*", "http://localhost:8787/*"]
+}

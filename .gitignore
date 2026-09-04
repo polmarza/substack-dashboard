@@ -1,0 +1,10 @@
+# Your data and session — never commit these
+data/
+.profile/
+dashboard.html
+
+# Build artifacts
+*.skill
+node_modules/
+
+.DS_Store

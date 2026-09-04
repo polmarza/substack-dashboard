@@ -1,0 +1,24 @@
+{
+  "name": "substack-dashboard",
+  "version": "1.0.0",
+  "description": "Local analytics dashboard for your own Substack publications, built on Substack's private API using your browser session.",
+  "scripts": {
+    "login": "NODE_NO_WARNINGS=1 node tools/login.mjs",
+    "sync": "NODE_NO_WARNINGS=1 node tools/sync.mjs",
+    "build": "NODE_NO_WARNINGS=1 node tools/build.mjs",
+    "refresh": "npm run sync && npm run build",
+    "serve": "NODE_NO_WARNINGS=1 node tools/server.mjs 8787",
+    "import": "NODE_NO_WARNINGS=1 node tools/import.mjs",
+    "start": "NODE_NO_WARNINGS=1 node tools/server.mjs 8787",
+    "install-service": "node tools/install-service.mjs",
+    "uninstall-service": "node tools/install-service.mjs --uninstall"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "playwright-core": "^1.62.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
