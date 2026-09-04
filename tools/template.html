@@ -59,7 +59,7 @@
   .navsel { position: relative; }
   .navbtn { display: inline-flex; align-items: center; gap: 8px; max-width: 340px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 14px; font: inherit; font-weight: 600; cursor: pointer; }
   .navbtn .nl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .navmore { flex: none; background: var(--hover); color: var(--ink-2); border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
+  .navmore { flex: none; background: var(--ink); color: var(--page); border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
   .navmenu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 260px; max-height: 62vh; overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.18); padding: 6px; }
   .navmenu button { display: flex; align-items: center; gap: 9px; width: 100%; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
   .navmenu button:hover { background: var(--hover); }
@@ -88,7 +88,8 @@
   @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
   .card h2 { font-size: 14px; margin: 0 0 2px; font-weight: 600; }
   .card.collapsible .head { cursor: pointer; user-select: none; }
-  .chev { flex: none; width: 22px; height: 22px; margin-right: 2px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+  .headactions { display: flex; align-items: center; gap: 6px; flex: none; }
+  .chev { flex: none; width: 22px; height: 22px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
   .chev::before { content: ''; position: absolute; inset: 0; margin: auto; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s ease; }
   .card.collapsed .chev::before { transform: rotate(-45deg) translate(-1px, 1px); }
   .card.collapsed .cardbody { display: none; }
@@ -256,9 +257,9 @@
       <div class="tablewrap"><table id="cmp-table" class="cmp-table"><thead></thead><tbody></tbody></table></div>
     </div>
     <div class="grid cmp-charts">
-      <div class="card collapsible" data-panel="cmpSubs"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="subscribers"></h2><div class="sub" data-i18n="subsPerPub"></div></div></div><div class="cardbody"><div id="cmp-subs"></div></div></div>
-      <div class="card collapsible" data-panel="cmpViews"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 id="cmp-views-h"></h2><div class="sub" id="cmp-views-sub"></div></div></div><div class="cardbody"><div id="cmp-views"></div></div></div>
-      <div class="card collapsible" data-panel="cmpOpen"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="openRate"></h2><div class="sub" data-i18n="openRateSub"></div></div></div><div class="cardbody"><div id="cmp-open"></div></div></div>
+      <div class="card collapsible" data-panel="cmpSubs"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" data-i18n="subsPerPub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="cmp-subs"></div></div></div>
+      <div class="card collapsible" data-panel="cmpViews"><div class="head"><div><h2 id="cmp-views-h"></h2><div class="sub" id="cmp-views-sub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="cmp-views"></div></div></div>
+      <div class="card collapsible" data-panel="cmpOpen"><div class="head"><div><h2 data-i18n="openRate"></h2><div class="sub" data-i18n="openRateSub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="cmp-open"></div></div></div>
     </div>
     <div class="card">
       <div class="head"><div><h2 data-i18n="bestPosts"></h2><div class="sub" id="cmp-top-sub"></div></div>
@@ -271,10 +272,10 @@
   <div class="grid tiles" id="tiles"></div>
 
   <div class="grid charts">
-    <div class="card collapsible" data-panel="subs"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="subscribers"></h2><div class="sub" id="subs-sub"></div></div><button id="subs-table-btn"></button></div><div class="cardbody"><div id="subs-chart"></div><div id="subs-table" hidden></div></div></div>
-    <div class="card collapsible" data-panel="sources"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="growthSources"></h2><div class="sub" data-i18n="growthSourcesSub"></div></div></div><div class="cardbody"><div id="sources-chart"></div></div></div>
-    <div class="card wide collapsible" data-panel="views"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="viewsPerPost"></h2><div class="sub" id="views-sub"></div></div></div><div class="cardbody"><div id="views-chart"></div><div class="legend" id="views-legend"></div></div></div>
-    <div class="card wide collapsible" data-panel="geo"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="subsByCountry"></h2><div class="sub" id="geo-sub"></div></div></div><div class="cardbody"><div class="geowrap"><div id="geo-map"></div><div id="geo-list"></div></div></div></div>
+    <div class="card collapsible" data-panel="subs"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" id="subs-sub"></div></div><div class="headactions"><button id="subs-table-btn"></button><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="subs-chart"></div><div id="subs-table" hidden></div></div></div>
+    <div class="card collapsible" data-panel="sources"><div class="head"><div><h2 data-i18n="growthSources"></h2><div class="sub" data-i18n="growthSourcesSub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="sources-chart"></div></div></div>
+    <div class="card wide collapsible" data-panel="views"><div class="head"><div><h2 data-i18n="viewsPerPost"></h2><div class="sub" id="views-sub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="views-chart"></div><div class="legend" id="views-legend"></div></div></div>
+    <div class="card wide collapsible" data-panel="geo"><div class="head"><div><h2 data-i18n="subsByCountry"></h2><div class="sub" id="geo-sub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div class="geowrap"><div id="geo-map"></div><div id="geo-list"></div></div></div></div>
   </div>
 
   <div class="card">

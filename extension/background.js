@@ -161,6 +161,13 @@ async function sync() {
       await say(`   ${pub.subdomain}: ${ds.posts.length} posts, ${ds.summary?.totalEmail ?? '?'} subscribers`);
     }
 
+    // Si borraste una publicación en Substack, aquí también desaparece.
+    const pruned = await fetch(`${SERVER}/api/prune`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keep: prof.pubs.map((p) => p.subdomain) }),
+    }).then((r) => r.json()).catch(() => ({}));
+    if (pruned.removed && pruned.removed.length) await say(`   removed: ${pruned.removed.join(', ')}`);
+
     await say('→ notes…');
     try {
       const notes = await runInTab('https://substack.com/home', pageCollectNotes);

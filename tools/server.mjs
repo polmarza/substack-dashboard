@@ -103,6 +103,23 @@ http.createServer((req, res) => {
       return json(res, 200, r);
     }).catch(e => json(res, 400, { error: e.message }));
   }
+  // Publicaciones eliminadas en Substack: se borran también aquí, o quedarían de fantasmas.
+  if (url.pathname === '/api/prune' && req.method === 'POST') {
+    return readBody(req).then(body => {
+      const keep = new Set((JSON.parse(body).keep || []).map(String));
+      let removed = [];
+      let idx = { publications: [] };
+      try { idx = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'index.json'), 'utf8')); } catch {}
+      for (const p of idx.publications || []) {
+        if (keep.has(p.subdomain)) continue;
+        try { fs.rmSync(path.join(DATA_DIR, `${p.subdomain}.json`), { force: true }); } catch {}
+        removed.push(p.subdomain);
+      }
+      idx.publications = (idx.publications || []).filter(p => keep.has(p.subdomain));
+      fs.writeFileSync(path.join(DATA_DIR, 'index.json'), JSON.stringify(idx, null, 2));
+      return json(res, 200, { removed });
+    }).catch(e => json(res, 400, { error: e.message }));
+  }
   if (url.pathname === '/api/status') return json(res, 200, { running: state.running, log: state.log.slice(-30), lastResult: state.lastResult, lastSync: state.lastSync, lastSource: state.lastSource, session: state.session });
   if (url.pathname === '/api/sync' && req.method === 'POST') {
     const only = (url.searchParams.get('only') || '').split(',').filter(Boolean);
