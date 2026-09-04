@@ -27,7 +27,7 @@ def cut_between(h, start_marker, end_marker, keep_end=True):
 
 def derive(h):
     # 1. Fuera el bloque que consulta al servidor local (botón Sincronizar).
-    h = cut_between(h, "  // ---------- sincronización (servidor local) ----------",
+    h = cut_between(h, "  // ---------- sincronización ----------",
                     "  addEventListener('resize',")
 
     # 2. La serie de suscriptores sale solo del dataset: sin base de datos no hay histórico.
@@ -45,17 +45,18 @@ def derive(h):
     h = h.replace("        ${evoHtml}\n", "")
 
     # 4. Fuera la barra de sincronización de la cabecera.
-    bar = """      <div class="syncbar" id="syncbar" hidden>
-        <span class="syncstate" id="syncstate"></span>
-        <button class="btn" id="login-btn" data-i18n="signIn" hidden></button>
-        <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
-      </div>
+    bar = """        <div class="syncbar" id="syncbar" hidden>
+          <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
+          <button class="btn" id="install-btn" data-i18n="installExt" hidden></button>
+        </div>
 """
     assert bar in h, "no encuentro la barra de sincronización"
     h = h.replace(bar, "")
-    log = '  <pre class="synclog" id="synclog" hidden></pre>\n'
-    assert log in h, "no encuentro el registro de sincronización"
-    h = h.replace(log, "")
+    # La capa de ayuda para instalar la extensión tampoco aplica sin servidor.
+    i = h.index('  <div class="palette" id="installhelp" hidden>')
+    j = h.index("</div>\n", h.index('id="installclose"')) + len("</div>\n")
+    j = h.index("  </div>\n", j) + len("  </div>\n")
+    h = h[:i] + h[j:]
 
     # 5. Y sus reglas CSS, que sin la barra no las usa nadie.
     h = re.sub(r"^  \.(syncbar|syncstate|synclog)\b[^\n]*\n", "", h, flags=re.M)

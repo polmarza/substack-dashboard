@@ -35,8 +35,27 @@
   header h1 small { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 8px; }
   .hrow { display: flex; align-items: center; gap: 12px; }
   .hrow1 { justify-content: space-between; margin-bottom: 12px; }
-  .hrow2 { justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; }
-  .hleft { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+  .hnav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .navbtn.plain { font-weight: 500; }
+  .navbtn[aria-current="true"], .navbtn.plain[aria-current="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+  .iconbtn { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+  .iconbtn:hover { background: var(--hover); color: var(--ink); }
+  .iconbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  /* Paleta de búsqueda: se superpone para que los resultados se vean sin depender del scroll. */
+  .palette { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.45); display: flex; align-items: flex-start; justify-content: center; padding: 12vh 16px 16px; }
+  .palette[hidden] { display: none; }
+  .palbox { width: 100%; max-width: 620px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.3); overflow: hidden; }
+  .palbox input { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid var(--grid); background: transparent; color: var(--ink); font: inherit; font-size: 16px; padding: 15px 18px; outline: none; }
+  .palresults { max-height: 52vh; overflow: auto; }
+  .palresults button { display: block; width: 100%; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; padding: 10px 18px; cursor: pointer; }
+  .palresults button:hover, .palresults button.sel { background: var(--hover); }
+  .palresults .pt { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .palresults .pm { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .palempty { padding: 18px; color: var(--muted); font-size: 13px; }
+  .palbox.help { padding: 20px 22px 22px; }
+  .palbox.help h3 { margin: 0 0 12px; font-size: 15px; }
+  .palbox.help ol { margin: 0 0 16px; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+  .palbox.help code { background: var(--page); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
   .navsel { position: relative; }
   .navbtn { display: inline-flex; align-items: center; gap: 8px; max-width: 340px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 14px; font: inherit; font-weight: 600; cursor: pointer; }
   .navbtn .nl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -68,6 +87,13 @@
   .charts .wide { grid-column: 1 / -1; }
   @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
   .card h2 { font-size: 14px; margin: 0 0 2px; font-weight: 600; }
+  .card.collapsible .head { cursor: pointer; user-select: none; }
+  .chev { flex: none; width: 22px; height: 22px; margin-right: 2px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+  .chev::before { content: ''; position: absolute; inset: 0; margin: auto; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s ease; }
+  .card.collapsed .chev::before { transform: rotate(-45deg) translate(-1px, 1px); }
+  .card.collapsed .cardbody { display: none; }
+  .card.collapsed { padding-bottom: 12px; }
+  .card.collapsed .head { margin-bottom: 0; }
   .card .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
   .card .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
   .card .head button:not(.seg button) { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; }
@@ -164,22 +190,35 @@
   <header>
     <div class="hrow hrow1">
       <h1><span data-i18n="title"></span> <small id="who"></small></h1>
-      <select class="ctl" id="langsel" data-i18n-aria="langLabel">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
-    <div class="hrow hrow2">
-      <div class="hleft">
+      <div class="hnav">
         <div class="navsel">
           <button class="navbtn" id="navbtn" aria-haspopup="menu" aria-expanded="false">
             <i class="pubdot" id="navdot"></i><span class="nl" id="navlabel"></span><span class="navmore" id="navmore" hidden></span>
           </button>
           <div class="navmenu" id="navmenu" role="menu" hidden></div>
         </div>
+        <button class="navbtn plain" id="notesbtn" hidden></button>
+        <button class="iconbtn" id="searchbtn" data-i18n-aria="searchPosts" title="">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 L18 18"/></svg>
+        </button>
+        <div class="navsel">
+          <button class="iconbtn" id="langbtn" aria-haspopup="menu" aria-expanded="false" data-i18n-aria="langLabel" title="">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2"/><ellipse cx="10" cy="10" rx="3" ry="7.2"/><path d="M3 7.6h14M3 12.4h14"/></svg>
+          </button>
+          <div class="navmenu" id="langmenu" role="menu" hidden>
+            <button role="menuitem" data-lang="en">English</button>
+            <button role="menuitem" data-lang="es">Español</button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
+  <div class="palette" id="palette" hidden>
+    <div class="palbox">
+      <input type="search" id="palinput" data-i18n-ph="searchPosts" autocomplete="off">
+      <div class="palresults" id="palresults"></div>
+    </div>
+  </div>
 
   <div class="filters">
     <div class="seg" id="range" role="group" data-i18n-aria="rangeLabel">
@@ -192,7 +231,6 @@
       <button data-mode="abs" aria-pressed="true" data-i18n="absolute"></button>
       <button data-mode="rel" aria-pressed="false" data-i18n="relative"></button>
     </div>
-    <input type="search" id="q" data-i18n-ph="searchPosts">
     <div class="spacer"></div>
     <div class="meta" id="meta"></div>
   </div>
@@ -206,9 +244,9 @@
       <div class="tablewrap"><table id="cmp-table" class="cmp-table"><thead></thead><tbody></tbody></table></div>
     </div>
     <div class="grid cmp-charts">
-      <div class="card"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" data-i18n="subsPerPub"></div></div></div><div id="cmp-subs"></div></div>
-      <div class="card"><div class="head"><div><h2 id="cmp-views-h"></h2><div class="sub" id="cmp-views-sub"></div></div></div><div id="cmp-views"></div></div>
-      <div class="card"><div class="head"><div><h2 data-i18n="openRate"></h2><div class="sub" data-i18n="openRateSub"></div></div></div><div id="cmp-open"></div></div>
+      <div class="card collapsible" data-panel="cmpSubs"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="subscribers"></h2><div class="sub" data-i18n="subsPerPub"></div></div></div><div class="cardbody"><div id="cmp-subs"></div></div></div>
+      <div class="card collapsible" data-panel="cmpViews"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 id="cmp-views-h"></h2><div class="sub" id="cmp-views-sub"></div></div></div><div class="cardbody"><div id="cmp-views"></div></div></div>
+      <div class="card collapsible" data-panel="cmpOpen"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="openRate"></h2><div class="sub" data-i18n="openRateSub"></div></div></div><div class="cardbody"><div id="cmp-open"></div></div></div>
     </div>
     <div class="card">
       <div class="head"><div><h2 data-i18n="bestPosts"></h2><div class="sub" id="cmp-top-sub"></div></div>
@@ -221,10 +259,10 @@
   <div class="grid tiles" id="tiles"></div>
 
   <div class="grid charts">
-    <div class="card"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" id="subs-sub"></div></div><button id="subs-table-btn"></button></div><div id="subs-chart"></div><div id="subs-table" hidden></div></div>
-    <div class="card"><div class="head"><div><h2 data-i18n="growthSources"></h2><div class="sub" data-i18n="growthSourcesSub"></div></div></div><div id="sources-chart"></div></div>
-    <div class="card wide"><div class="head"><div><h2 data-i18n="viewsPerPost"></h2><div class="sub" id="views-sub"></div></div></div><div id="views-chart"></div><div class="legend" id="views-legend"></div></div>
-    <div class="card wide"><div class="head"><div><h2 data-i18n="subsByCountry"></h2><div class="sub" id="geo-sub"></div></div></div><div class="geowrap"><div id="geo-map"></div><div id="geo-list"></div></div></div>
+    <div class="card collapsible" data-panel="subs"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="subscribers"></h2><div class="sub" id="subs-sub"></div></div><button id="subs-table-btn"></button></div><div class="cardbody"><div id="subs-chart"></div><div id="subs-table" hidden></div></div></div>
+    <div class="card collapsible" data-panel="sources"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="growthSources"></h2><div class="sub" data-i18n="growthSourcesSub"></div></div></div><div class="cardbody"><div id="sources-chart"></div></div></div>
+    <div class="card wide collapsible" data-panel="views"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="viewsPerPost"></h2><div class="sub" id="views-sub"></div></div></div><div class="cardbody"><div id="views-chart"></div><div class="legend" id="views-legend"></div></div></div>
+    <div class="card wide collapsible" data-panel="geo"><div class="head"><button class="chev" aria-expanded="true"></button><div><h2 data-i18n="subsByCountry"></h2><div class="sub" id="geo-sub"></div></div></div><div class="cardbody"><div class="geowrap"><div id="geo-map"></div><div id="geo-list"></div></div></div></div>
   </div>
 
   <div class="card">
@@ -259,9 +297,14 @@
   // Una sola plantilla en dos idiomas. Las claves son las mismas; lo que cambia es el valor.
   const STRINGS = {
     es: {
-      title: 'Substack Dashboard', signIn: 'Iniciar sesión en Substack', sync: 'Sincronizar',
+      title: 'Substack Dashboard', sync: 'Sincronizar',
       langLabel: 'Idioma', sectionLabel: 'Sección', pubLabel: 'Publicación',
       newsletters: 'Newsletters', allPublications: 'Todas las publicaciones',
+      installExt: 'Instalar la extensión', searchHint: 'Escribe para buscar entre tus posts',
+      noResults: 'Sin resultados', inPub: (p) => `en ${p}`,
+      installSteps: ['Abre <code>chrome://extensions</code> y activa el modo de desarrollador.',
+                     'Pulsa «Cargar descomprimida» y elige la carpeta <code>extension/</code> del proyecto.',
+                     'Vuelve aquí y recarga la página: el botón Sincronizar aparecerá solo.'],
       compareAll: 'Comparar todas', menuPublications: 'Publicaciones', menuOther: 'Otras vistas',
       morePubs: (n) => `+${n}`,
       metaLine: (n, when) => `${n} publicaciones · última sincronización ${when}`,
@@ -338,14 +381,7 @@
       dComparable: 'Vistas de posts comparables', comparableNote: (o, n) => `apertura ${o} · sobre ${n} posts`,
       secSources: 'De dónde vienen las vistas', secWeek: 'Primera semana (vistas al día)',
       secLinks: 'Enlaces más clicados', secEvolution: 'Evolución entre sincronizaciones',
-      noOrigin: 'Sin datos de origen.', noDaily: 'Sin datos diarios.', noClicks: 'Sin clics registrados.',
-      syncWaitLogin: 'Esperando a que inicies sesión en la ventana de Chrome…',
-      syncBuilding: 'Generando el panel…', syncing: 'Sincronizando… ',
-      syncFailed: 'La última operación falló. Revisa el registro.',
-      lastSync: 'Última sincronización: ', viaExtension: ' (extensión de Chrome)',
-      noPlaywright: ' · sin sesión de Playwright: usa la extensión de Chrome',
-      noSession: 'Sin sesión: usa la extensión de Chrome o inicia sesión.',
-      neverSynced: 'Sin sincronizar todavía.', alreadyRunning: 'Ya hay una operación en marcha.',
+      noOrigin: 'Sin datos de origen.', noDaily: 'Sin datos diarios.', noClicks: 'Sin clics registrados.', syncing: 'Sincronizando… ',
       noChangePrev: 'sin cambios vs periodo anterior', rangeAllShort: 'todo',
       subsByCountry: 'Suscriptores por país',
       geoSub: (c, t) => `${c} países · ${t} suscriptores localizados`,
@@ -361,9 +397,14 @@
       sinceDate: (d) => `desde ${d}`,
     },
     en: {
-      title: 'Substack Dashboard', signIn: 'Sign in to Substack', sync: 'Sync',
+      title: 'Substack Dashboard', sync: 'Sync',
       langLabel: 'Language', sectionLabel: 'Section', pubLabel: 'Publication',
       newsletters: 'Newsletters', allPublications: 'All publications',
+      installExt: 'Install the extension', searchHint: 'Type to search your posts',
+      noResults: 'No results', inPub: (p) => `in ${p}`,
+      installSteps: ['Open <code>chrome://extensions</code> and turn on developer mode.',
+                     'Click "Load unpacked" and pick the project\'s <code>extension/</code> folder.',
+                     'Come back here and reload: the Sync button appears on its own.'],
       compareAll: 'Compare all', menuPublications: 'Publications', menuOther: 'Other views',
       morePubs: (n) => `+${n}`,
       metaLine: (n, when) => `${n} publications · last sync ${when}`,
@@ -440,14 +481,7 @@
       dComparable: 'Views of comparable posts', comparableNote: (o, n) => `open rate ${o} · across ${n} posts`,
       secSources: 'Where the views come from', secWeek: 'First week (views per day)',
       secLinks: 'Most-clicked links', secEvolution: 'Change between syncs',
-      noOrigin: 'No source data.', noDaily: 'No daily data.', noClicks: 'No clicks recorded.',
-      syncWaitLogin: 'Waiting for you to sign in in the Chrome window…',
-      syncBuilding: 'Building the dashboard…', syncing: 'Syncing… ',
-      syncFailed: 'The last operation failed. Check the log.',
-      lastSync: 'Last sync: ', viaExtension: ' (Chrome extension)',
-      noPlaywright: ' · no Playwright session: use the Chrome extension',
-      noSession: 'No session: use the Chrome extension or sign in.',
-      neverSynced: 'Not synced yet.', alreadyRunning: 'An operation is already running.',
+      noOrigin: 'No source data.', noDaily: 'No daily data.', noClicks: 'No clicks recorded.', syncing: 'Syncing… ',
       noChangePrev: 'no change vs previous period', rangeAllShort: 'all',
       subsByCountry: 'Subscribers by country',
       geoSub: (c, t) => `${c} countries · ${t} located subscribers`,
@@ -524,6 +558,93 @@
   document.querySelectorAll('[data-i18n-ph]').forEach(n => { const s = T[n.dataset.i18nPh]; n.placeholder = s; n.setAttribute('aria-label', s); });
   document.querySelectorAll('[data-i18n-aria]').forEach(n => n.setAttribute('aria-label', T[n.dataset.i18nAria]));
 
+  // ---------- paleta de búsqueda ----------
+  // Buscar en la tabla dejaba los resultados fuera de pantalla con los paneles abiertos.
+  // Una capa superpuesta enseña lo que encuentras sin depender del scroll, y busca en
+  // todas las publicaciones a la vez, no solo en la que estás viendo.
+  const palette = $('#palette'), palinput = $('#palinput'), palresults = $('#palresults');
+  let palHits = [], palSel = 0;
+
+  const allPosts = () => DATA.publications.flatMap((p, i) => p.posts.map(x => ({ ...x, pubIdx: i, pubName: p.name })));
+
+  function palRender() {
+    const q = palinput.value.trim().toLowerCase();
+    palHits = !q ? [] : allPosts()
+      .filter(p => (p.title || '').toLowerCase().includes(q))
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 30);
+    palSel = 0;
+    if (!q) { palresults.innerHTML = `<div class="palempty">${esc(T.searchHint)}</div>`; return; }
+    if (!palHits.length) { palresults.innerHTML = `<div class="palempty">${esc(T.noResults)}</div>`; return; }
+    palresults.innerHTML = palHits.map((p, i) => `<button data-i="${i}" class="${i === 0 ? 'sel' : ''}">
+      <span class="pt">${esc(p.title)}</span>
+      <span class="pm"><i class="pubdot" style="background:${pubColor(p.pubIdx)}"></i>${esc(T.inPub(p.pubName))} · ${df(p.date)} · ${nf.format(p.views)} ${T.uViews}</span></button>`).join('');
+  }
+  function palOpen() { palette.hidden = false; palinput.value = ''; palRender(); palinput.focus(); }
+  function palClose() { palette.hidden = true; }
+  function palGo(i) {
+    const p = palHits[i]; if (!p) return;
+    palClose();
+    selectView(p.pubIdx);
+    state.selected = p.id;
+    renderTable();
+    requestAnimationFrame(() => {
+      const row = $(`#posts tbody tr[data-id="${p.id}"]`);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+  $('#searchbtn').addEventListener('click', palOpen);
+  palinput.addEventListener('input', palRender);
+  palresults.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) palGo(+b.dataset.i); });
+  palette.addEventListener('click', e => { if (e.target === palette) palClose(); });
+  palinput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') return palClose();
+    if (e.key === 'Enter') return palGo(palSel);
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    if (!palHits.length) return;
+    palSel = (palSel + (e.key === 'ArrowDown' ? 1 : -1) + palHits.length) % palHits.length;
+    [...palresults.querySelectorAll('button')].forEach((b, i) => b.classList.toggle('sel', i === palSel));
+    palresults.querySelector('button.sel')?.scrollIntoView({ block: 'nearest' });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { palClose(); const ih = $('#installhelp'); if (ih) ih.hidden = true; closeAllMenus(); return; }
+    if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && !/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) {
+      e.preventDefault(); palOpen();
+    }
+  });
+
+  // ---------- paneles plegables ----------
+  // Qué paneles están plegados se guarda en este navegador, así que sobrevive a las
+  // sincronizaciones (que regeneran el HTML pero no tocan el almacenamiento local).
+  const PANELS_KEY = 'substack-dashboard-panels';
+  const readPanels = () => { try { return JSON.parse(localStorage.getItem(PANELS_KEY)) || {}; } catch { return {}; } };
+  const writePanels = (p) => { try { localStorage.setItem(PANELS_KEY, JSON.stringify(p)); } catch {} };
+
+  function applyPanel(card, collapsed) {
+    card.classList.toggle('collapsed', collapsed);
+    const chev = card.querySelector('.chev');
+    if (chev) chev.setAttribute('aria-expanded', String(!collapsed));
+  }
+  // Un gráfico plegado se mide con ancho cero, así que al desplegarlo hay que repintarlo.
+  const REDRAW = { subs: () => renderSubs(), sources: () => renderSources(), views: () => renderViews(), geo: () => renderGeo(),
+                   cmpSubs: () => renderCompare(), cmpViews: () => renderCompare(), cmpOpen: () => renderCompare() };
+  const restorePanels = () => { const saved = readPanels(); document.querySelectorAll('.card.collapsible').forEach(c => applyPanel(c, !!saved[c.dataset.panel])); };
+  function initPanels() {
+    const saved = readPanels();
+    document.querySelectorAll('.card.collapsible').forEach(card => {
+      const key = card.dataset.panel;
+      applyPanel(card, !!saved[key]);
+      card.querySelector('.head').addEventListener('click', (e) => {
+        if (e.target.closest('button') && !e.target.closest('.chev')) return;   // el botón «ver tabla» no pliega
+        const now = !card.classList.contains('collapsed');
+        applyPanel(card, now);
+        const p = readPanels(); p[key] = now; writePanels(p);
+        if (!now && REDRAW[key]) REDRAW[key]();
+      });
+    });
+  }
+
   // ---------- navegación ----------
   // Navegación: se muestra la publicación actual y, si hay más, un contador «+N» que abre
   // el menú. Lo habitual es tener una sola newsletter, así que el caso común no paga nada.
@@ -543,7 +664,9 @@
   const viewName = (idx) => idx === -2 ? T.notesTab : idx === -1 ? T.compareAll : (DATA.publications[idx]?.name || '');
   function syncNav() {
     const idx = state.pub;
-    navlabel.textContent = viewName(idx);
+    navlabel.textContent = idx === -2 ? T.newsletters : viewName(idx);
+    navbtn.setAttribute('aria-current', String(idx !== -2));
+    if (notesbtn) notesbtn.setAttribute('aria-current', String(idx === -2));
     navdot.hidden = idx < 0;
     if (idx >= 0) navdot.style.background = pubColor(idx);
     const others = DATA.publications.length - 1;
@@ -553,20 +676,26 @@
   }
   navmenu.innerHTML = `<div class="grp">${esc(T.menuPublications)}</div>`
     + DATA.publications.map((p, i) => `<button role="menuitem" data-idx="${i}"><i class="pubdot" style="background:${pubColor(i)}"></i>${esc(p.name)}</button>`).join('')
-    + (DATA.publications.length > 1 || hasNotes ? '<hr>' : '')
-    + (DATA.publications.length > 1 ? `<button role="menuitem" data-idx="-1">${esc(T.compareAll)}</button>` : '')
-    + (hasNotes ? `<button role="menuitem" data-idx="-2">${esc(T.notesTab)}</button>` : '');
+    + (DATA.publications.length > 1 ? `<hr><button role="menuitem" data-idx="-1">${esc(T.compareAll)}</button>` : '');
+  const notesbtn = $('#notesbtn');
+  notesbtn.hidden = !hasNotes;
+  notesbtn.textContent = T.notesTab;
+  notesbtn.addEventListener('click', () => selectView(-2));
 
   const closeMenu = () => { navmenu.hidden = true; navbtn.setAttribute('aria-expanded', 'false'); };
+  function closeAllMenus() {
+    closeMenu();
+    const lm = $('#langmenu'); if (lm) { lm.hidden = true; $('#langbtn').setAttribute('aria-expanded', 'false'); }
+  }
   navbtn.addEventListener('click', e => {
     e.stopPropagation();
     const open = navmenu.hidden;
+    closeAllMenus();
     navmenu.hidden = !open;
     navbtn.setAttribute('aria-expanded', String(open));
   });
   navmenu.addEventListener('click', e => { const b = e.target.closest('button[data-idx]'); if (!b) return; closeMenu(); selectView(+b.dataset.idx); });
-  document.addEventListener('click', e => { if (!navmenu.hidden && !e.target.closest('.navsel')) closeMenu(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  document.addEventListener('click', e => { if (!e.target.closest('.navsel')) closeAllMenus(); });
 
   function selectView(idx) {
     state.pub = idx;
@@ -583,16 +712,17 @@
   });
   $('#cmp-top-metric').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.topMetric = b.dataset.m; [...$('#cmp-top-metric').children].forEach(c => c.setAttribute('aria-pressed', c === b)); renderTop(); });
   $('#who').textContent = DATA.user ? '@' + DATA.user.handle : '';
-  const langsel = $('#langsel');
-  langsel.value = LANG;
-  langsel.addEventListener('change', () => {
-    try { localStorage.setItem(LANG_KEY, langsel.value); } catch {}
+  const langbtn = $('#langbtn'), langmenu = $('#langmenu');
+  [...langmenu.querySelectorAll('button')].forEach(b => b.setAttribute('aria-current', String(b.dataset.lang === LANG)));
+  langbtn.addEventListener('click', e => { e.stopPropagation(); const open = langmenu.hidden; closeAllMenus(); langmenu.hidden = !open; langbtn.setAttribute('aria-expanded', String(open)); });
+  langmenu.addEventListener('click', e => {
+    const b = e.target.closest('button[data-lang]'); if (!b) return;
+    try { localStorage.setItem(LANG_KEY, b.dataset.lang); } catch {}
     const u = new URL(location.href);
-    u.searchParams.set('lang', langsel.value);
+    u.searchParams.set('lang', b.dataset.lang);
     location.replace(u.toString());   // los textos se resuelven al cargar
   });
   $('#range').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.days = +b.dataset.days; [...$('#range').children].forEach(c => c.setAttribute('aria-pressed', c === b)); render(); });
-  $('#q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); renderTable(); renderViews(); });
   $('#subs-table-btn').textContent = T.viewTable;
   $('#subs-table-btn').onclick = () => { const t = $('#subs-table'); t.hidden = !t.hidden; $('#subs-table-btn').textContent = t.hidden ? T.viewTable : T.hideTable; };
 
@@ -603,13 +733,14 @@
   function render() {
     const cmp = state.pub === -1, notes = state.pub === -2;
     $('#compare').hidden = !cmp; $('#notesview').hidden = !notes;
-    $('#pubview').hidden = cmp || notes; $('#q').hidden = cmp || notes;
+    $('#pubview').hidden = cmp || notes;
     // Absolutas/Relativas normaliza métricas de posts: en Notas no hay nada que normalizar.
     $('#mode').hidden = notes;
     $('#relnote').hidden = notes || !isRel();
     if (notes) { renderNotes(); return; }
-    if (cmp) { renderCompare(); return; }
+    if (cmp) { renderCompare(); restorePanels(); return; }
     renderMeta(); renderTiles(); renderSubs(); renderSources(); renderViews(); renderTable(); renderGeo();
+    restorePanels();
   }
 
   // ---------- comparativa ----------
@@ -1095,6 +1226,7 @@
   }
 
   addEventListener('resize', () => { if (state.pub === -1) renderCompare(); else if (state.pub === -2) renderNotes(); else { renderSubs(); renderSources(); renderViews(); renderGeo(); } });
+  initPanels();
   selectView(primaryIdx);
 })();
 </script>

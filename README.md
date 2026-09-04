@@ -86,10 +86,7 @@ npm install
 npm start          # http://127.0.0.1:8787/
 ```
 
-From the dashboard:
-
-1. **Sign in to Substack** — opens a Chrome window; log in once. The profile is saved in `.profile/`.
-2. **Sync** — downloads every publication, saves a new snapshot, and rebuilds the dashboard.
+The dashboard's **Sync** button drives the Chrome extension (option 3), which is the path that reliably carries your session. If the extension isn't installed, the dashboard says so and shows how to add it. You can also sync from a terminal with `npm run sync`, which uses Playwright and needs its own `npm run login` first.
 
 Want to see it before connecting anything? `npm run demo` builds a dashboard from fictitious data.
 
@@ -112,6 +109,10 @@ It opens a short-lived background tab on each of your publications, runs the sam
 ---
 
 ## What the dashboard shows
+
+**Panels fold away.** Every chart has a chevron; collapse the ones you don't need and the choice is remembered in that browser, so it survives syncing.
+
+**Search.** The magnifier (or `/`, or `Cmd+K`) opens a palette that searches posts across every publication. Picking one jumps to its publication and expands its detail.
 
 **Navigation.** The dashboard opens on your primary publication — the one Substack itself marks as primary. If you run more than one, a `+N` chip beside its name opens a menu with the others, plus **Compare all** and **Notes**. With a single publication that chip never appears.
 

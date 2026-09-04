@@ -64,8 +64,8 @@ const clearAnnotations = () => page.evaluate(() => document.querySelectorAll('._
 
 // El panel abre en la publicación principal; para las demás vistas se usa el menú.
 const goTo = async (idx) => {
-  await page.click('#navbtn');
-  await page.click(`#navmenu button[data-idx="${idx}"]`);
+  if (idx === -2) { await page.click('#notesbtn'); }      // Notas es su propio botón
+  else { await page.click('#navbtn'); await page.click(`#navmenu button[data-idx="${idx}"]`); }
   await page.waitForTimeout(400);
 };
 

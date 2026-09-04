@@ -86,10 +86,7 @@ npm install
 npm start          # http://127.0.0.1:8787/
 ```
 
-Desde el panel:
-
-1. **Iniciar sesión en Substack** — abre una ventana de Chrome; inicias sesión una vez. El perfil queda en `.profile/`.
-2. **Sincronizar** — descarga todas las publicaciones, guarda una nueva foto y regenera el panel.
+El botón **Sincronizar** del panel dispara la extensión de Chrome (opción 3), que es la vía que lleva tu sesión de forma fiable. Si la extensión no está instalada, el panel te lo dice y te enseña cómo añadirla. También puedes sincronizar desde la terminal con `npm run sync`, que usa Playwright y necesita antes su propio `npm run login`.
 
 ¿Quieres verlo antes de conectar nada? `npm run demo` construye un panel con datos ficticios.
 
@@ -112,6 +109,10 @@ Abre una pestaña efímera en segundo plano en cada una de tus publicaciones, ej
 ---
 
 ## Qué muestra el panel
+
+**Los paneles se pliegan.** Cada gráfico tiene un chevrón; pliega los que no necesites y la elección se recuerda en ese navegador, así que sobrevive a las sincronizaciones.
+
+**Buscador.** La lupa (o `/`, o `Cmd+K`) abre una paleta que busca posts en todas tus publicaciones. Al elegir uno salta a su publicación y despliega su detalle.
 
 **Navegación.** El panel abre en tu publicación principal, la que el propio Substack marca como tal. Si tienes más de una, un contador `+N` junto a su nombre abre un menú con las demás, más **Comparar todas** y **Notas**. Con una sola publicación ese contador no aparece.
 
