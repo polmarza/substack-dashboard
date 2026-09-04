@@ -62,47 +62,38 @@ Privacy policy URL: `https://github.com/polmarza/substack-dashboard/blob/main/PR
 
 ### Test instructions tab
 
-The reviewer needs a Substack account to see the extension do anything, so fill
-this tab in even though it is optional — with the host-permission review, a
-reviewer who cannot reach the dashboard is a reviewer who cannot approve it.
+Optional in theory, but the reviewer needs a Substack account to see the
+extension do anything, and with the host-permission review a reviewer who cannot
+reach the dashboard is a reviewer who cannot approve it. **500-character limit.**
 
-**English (paste this):**
-
-```text
-The extension only does anything for someone signed in to Substack who administers at least one publication: it reads that person's own statistics. No account of ours is involved and there is nothing to pay.
-
-To test it:
-
-1. Sign in at https://substack.com with any free account. If that account has no publication yet, create one from Substack's own "write / start a publication" flow — it takes about two minutes and asks for no payment details. Publishing one post gives the charts something to show.
-2. Click the extension icon, then "Sync all publications". It opens one background tab per publication, reads the stats from Substack's own /api/v1 endpoints in that tab, closes it, and stores the result in chrome.storage.local.
-3. Click "Open the dashboard" to see the result.
-
-Without a Substack session nothing breaks: the popup reports "No admin publications found. Sign in at substack.com and try again." and the dashboard shows an empty state with a Sync button.
-
-If you would rather have a dedicated test account, ask at the publisher contact email and we will set one up.
-```
-
-**Español:**
+**English (paste this) — 486/500:**
 
 ```text
-La extensión solo hace algo para quien tiene la sesión iniciada en Substack y administra al menos una publicación: lee las estadísticas de esa persona. No interviene ninguna cuenta nuestra y no hay nada que pagar.
+Needs a Substack account that administers a publication: it reads that user's own stats. No account of ours, nothing to pay.
 
-Para probarla:
+1. Sign in at substack.com. No publication? Create one there: ~2 min, free, no payment details. Publish a post so the charts have data.
+2. Extension icon > Sync all publications. It opens a background tab per publication, reads Substack's /api/v1 stats there, closes it, stores them locally.
+3. Open the dashboard.
 
-1. Inicia sesión en https://substack.com con cualquier cuenta gratuita. Si esa cuenta aún no tiene publicación, crea una desde el propio flujo de Substack: tarda unos dos minutos y no pide datos de pago. Publicar un post da a las gráficas algo que enseñar.
-2. Pulsa el icono de la extensión y luego «Sync all publications». Abre una pestaña en segundo plano por publicación, lee las estadísticas de los endpoints /api/v1 de Substack en esa pestaña, la cierra y guarda el resultado en chrome.storage.local.
-3. Pulsa «Open the dashboard» para verlo.
-
-Sin sesión de Substack no se rompe nada: el popup avisa con «No admin publications found. Sign in at substack.com and try again.» y el panel enseña un estado vacío con su botón de sincronizar.
-
-Si prefieres una cuenta de prueba dedicada, pídela al correo de contacto del editor y la preparamos.
+With no session it fails cleanly, saying so.
 ```
 
-Providing credentials of your own is not necessary: any free Substack account
-works, and Substack signs in by emailed code, which a reviewer could not receive
-on an account of yours anyway. If they insist, create a throwaway account with a
-publication, set a password on it in Substack's settings, and put those
-credentials in this tab — never your own account.
+**Español — 486/500:**
+
+```text
+Necesita una cuenta de Substack que administre una publicación: lee las estadísticas de ese usuario. Ninguna cuenta nuestra, nada que pagar.
+
+1. Inicia sesión en substack.com. ¿Sin publicación? Crea una allí: ~2 min y gratis. Publica un post para que haya datos.
+2. Icono de la extensión > Sync all publications. Abre una pestaña de fondo por publicación, lee ahí las estadísticas /api/v1, la cierra y las guarda en local.
+3. Open the dashboard.
+
+Sin sesión falla limpiamente, avisando.
+```
+
+Do not hand over credentials of your own: any free Substack account works, and
+Substack signs in by emailed code, which a reviewer could not receive on your
+account anyway. If they insist, make a throwaway account with a publication, set
+a password on it in Substack's settings, and put those credentials here.
 
 ### The one thing nobody can fill in for you
 
