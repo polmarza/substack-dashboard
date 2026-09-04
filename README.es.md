@@ -6,6 +6,43 @@ Substack no tiene API pública. Su panel de escritor habla con una API privada e
 
 *[Read me in English](README.md)*
 
+
+## Qué aspecto tiene
+
+Las capturas usan **datos ficticios** generados con `npm run demo`. No aparece ninguna publicación real.
+
+**Comparativa entre publicaciones, cifras absolutas.** La lista más grande gana en casi todo y el top 10 global lo copa una sola publicación:
+
+![Comparativa, métricas absolutas](docs/comparison-absolute.png)
+
+**Los mismos datos, normalizados por audiencia.** Al dividir el alcance entre los suscriptores que recibieron cada envío, y la interacción entre las vistas del propio post, cambia el retrato: una lista pequeña y fiel puede rendir más que una grande:
+
+![Comparativa, métricas relativas](docs/comparison-relative.png)
+
+**Una publicación en detalle**, con el crecimiento de suscriptores, las fuentes de captación y las vistas por post:
+
+![Vista general de una publicación](docs/publication-overview.png)
+
+**Cualquier post**, con sus fuentes de tráfico, los enlaces más clicados y las vistas diarias de la primera semana:
+
+![Detalle de un post](docs/post-detail.png)
+
+### Métricas absolutas y relativas
+
+Las cifras en bruto favorecen a los posts recientes: uno publicado a 1.800 suscriptores superará a otro publicado a 200, aunque el antiguo llegara a una porción mucho mayor de su audiencia. Triplicar los "me gusta" después de triplicar la lista no es una mejora.
+
+El modo **Relativas** normaliza:
+
+| Métrica | Denominador | Para qué |
+|---|---|---|
+| Vistas por 100 suscriptores | suscriptores que recibieron el envío | alcance sin depender del tamaño de la lista |
+| Reacciones y comentarios por 100 vistas | vistas del propio post | interacción sin depender del alcance |
+| Altas por 1.000 vistas | vistas del propio post | conversión sin depender del tráfico |
+
+La tasa de apertura y el CTR ya son proporciones, así que no cambian.
+
+Hay una trampa que el panel resuelve de forma explícita: un denominador diminuto dispara cualquier proporción (un post enviado a 25 personas que se hace viral en la web marca 1.500 vistas por 100 suscriptores). Por eso las clasificaciones dejan fuera lo que no llega a 30 de denominador, mientras que las tablas siguen mostrando el valor junto al número por el que se dividió, para que puedas juzgarlo tú.
+
 ---
 
 ## Tres formas de usarlo
@@ -45,6 +82,8 @@ Desde el panel:
 
 1. **Iniciar sesión en Substack** — abre una ventana de Chrome; inicias sesión una vez. El perfil queda en `.profile/`.
 2. **Sincronizar** — descarga todas las publicaciones, guarda una nueva foto y regenera el panel.
+
+¿Quieres verlo antes de conectar nada? `npm run demo` construye un panel con datos ficticios.
 
 Equivalentes por terminal: `npm run login`, `npm run sync` (o `npm run sync -- mi-newsletter` para una sola), `npm run build`, `npm run import`.
 
@@ -92,6 +131,8 @@ El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de
 substack-dashboard/     la skill portable de Claude Code (SKILL.md, recolector, generador, endpoints)
 tools/                  app local: servidor, sincronización con Playwright, capa SQLite, generador
 extension/              extensión de Chrome opcional (sincroniza con tu sesión normal)
+demo/                   datos ficticios para previsualizar (fuera de git)
+docs/                   capturas usadas en este README
 data/                   tus datos e histórico (fuera de git)
 ```
 
@@ -100,6 +141,10 @@ data/                   tus datos e histórico (fuera de git)
 Esto usa una API **no documentada**. Substack puede cambiarla sin previo aviso y los endpoints pueden dejar de funcionar. Tómalo como una herramienta de trabajo, no como un producto con soporte. Las peticiones van a menos de 1 por segundo para no forzar los límites.
 
 Documentación de endpoints: [`substack-dashboard/references/endpoints.md`](substack-dashboard/references/endpoints.md). Referencia de la comunidad: [substack-api-reference](https://github.com/AnthonyDavidAdams/substack-api-reference).
+
+## Atribución
+
+Publicado bajo licencia MIT, que ya obliga a que el aviso de copyright acompañe a cualquier copia o parte sustancial del software. Dicho en claro: úsalo, bifúrcalo y construye sobre él con libertad, pero mantén el crédito a **Pol Marzà** y, cuando tenga sentido, enlaza a este repositorio. Cada panel que genera la herramienta lleva una línea discreta de crédito al pie; te agradezco que la dejes.
 
 ## Licencia
 

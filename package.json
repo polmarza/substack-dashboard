@@ -11,7 +11,8 @@
     "import": "NODE_NO_WARNINGS=1 node tools/import.mjs",
     "start": "NODE_NO_WARNINGS=1 node tools/server.mjs 8787",
     "install-service": "node tools/install-service.mjs",
-    "uninstall-service": "node tools/install-service.mjs --uninstall"
+    "uninstall-service": "node tools/install-service.mjs --uninstall",
+    "demo": "python3 tools/make_demo.py demo"
   },
   "license": "MIT",
   "type": "module",
@@ -20,5 +21,6 @@
   },
   "engines": {
     "node": ">=22"
-  }
+  },
+  "author": "Pol Marzà"
 }
