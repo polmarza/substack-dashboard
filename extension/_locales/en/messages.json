@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "Dashboard for Substack",
+    "description": "Extension name shown in Chrome and in the Web Store."
+  },
+  "appDescription": {
+    "message": "Your own analytics dashboard for the Substack publications you write. Everything stays in your browser.",
+    "description": "Short description shown in the Web Store listing."
+  }
+}

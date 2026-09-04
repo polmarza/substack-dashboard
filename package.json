@@ -15,7 +15,9 @@
     "demo": "python3 tools/make_demo.py demo",
     "skill-template": "python3 tools/make_skill_template.py",
     "ext-template": "python3 tools/make_extension_dashboard.py",
-    "templates": "npm run skill-template && npm run ext-template"
+    "templates": "npm run skill-template && npm run ext-template",
+    "package": "npm run templates && NODE_NO_WARNINGS=1 node tools/package_extension.mjs",
+    "store-shots": "python3 tools/make_demo.py demo && node tools/store_screenshots.mjs"
   },
   "license": "MIT",
   "type": "module",

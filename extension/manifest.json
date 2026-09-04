@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Substack Dashboard",
+  "name": "__MSG_appName__",
   "version": "1.5.0",
-  "description": "Your own analytics dashboard for the Substack publications you write: views, opens, reactions, growth and subscribers by country.",
+  "description": "__MSG_appDescription__",
+  "default_locale": "en",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Substack Dashboard",
+    "default_title": "__MSG_appName__",
     "default_icon": {
       "16": "icon-16.png",
       "32": "icon-32.png",

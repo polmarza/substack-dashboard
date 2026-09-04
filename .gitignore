@@ -7,6 +7,8 @@ data/
 # Build artifacts
 *.skill
 node_modules/
+store/*.zip
+store/.stage/
 
 .DS_Store
 demo/

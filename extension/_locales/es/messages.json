@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "Panel para Substack",
+    "description": "Nombre de la extensión en Chrome y en la Web Store."
+  },
+  "appDescription": {
+    "message": "Tu propio panel de estadísticas de las publicaciones de Substack que escribes. Todo se queda en tu navegador.",
+    "description": "Descripción corta del listado en la Web Store."
+  }
+}

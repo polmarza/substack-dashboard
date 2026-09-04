@@ -179,6 +179,15 @@ docs/                   screenshots used in this README
 data/                   your snapshots + SQLite history (gitignored)
 ```
 
+### Publishing the extension
+
+`npm run package` writes `store/dashboard-for-substack-<version>.zip` from an
+explicit file list, so nothing strays into the upload, and `npm run store-shots`
+renders the 1280×800 screenshots the Chrome Web Store asks for. Everything the
+listing needs — descriptions, single purpose, a justification per permission — is
+in [`store/listing.md`](store/listing.md), and the privacy policy it points at is
+[`PRIVACY.md`](PRIVACY.md).
+
 `tools/template.html` is the single source for the dashboard: `npm run templates`
 regenerates the skill's copy and the extension's page from it. Run it after any
 change to the template — the extension's page cannot carry inline scripts, so the

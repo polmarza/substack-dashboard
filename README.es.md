@@ -179,6 +179,15 @@ docs/                   capturas usadas en este README
 data/                   tus datos e histórico (fuera de git)
 ```
 
+### Publicar la extensión
+
+`npm run package` escribe `store/dashboard-for-substack-<versión>.zip` a partir de
+una lista explícita de archivos, para que no se cuele nada en la subida, y
+`npm run store-shots` genera las capturas de 1280×800 que pide la Chrome Web
+Store. Todo lo que hace falta para la ficha —descripciones, propósito único, una
+justificación por permiso— está en [`store/listing.md`](store/listing.md), y la
+política de privacidad a la que apunta es [`PRIVACY.md`](PRIVACY.md).
+
 `tools/template.html` es la única fuente del panel: `npm run templates` regenera
 desde ahí la copia de la skill y la página de la extensión. Ejecútalo después de
 tocar la plantilla — la página de la extensión no puede llevar scripts en línea,
