@@ -23,14 +23,48 @@ Chrome Web Store reviewers work in English, and the host-permission review is
 where a listing gets held up. The Spanish equivalents are further down if you
 prefer them.
 
-Two things nobody can fill in for you, both on the Settings page:
+### Data use — what to tick
 
-1. **Publisher contact email** — enter it, then complete the verification email
-   Google sends. The item cannot be published until it is verified.
-2. **Data use certification** — tick the three boxes: you do not sell or transfer
-   user data, you do not use it for purposes unrelated to the item's single
-   purpose, and you do not use it to determine creditworthiness or for lending.
-   All three are true here: the extension transmits nothing.
+Chrome's definition of handling user data **includes data that never leaves the
+device**: "Extensions are required to disclose how they handle user data, even
+when data is processed or stored locally on a user's device and is not
+transmitted to external servers or third parties." So local-only storage still
+has to be declared.
+
+Tick these two categories:
+
+- **Personally identifiable information** — the extension stores the user's own
+  Substack display name and handle (from their own profile) so the dashboard can
+  show whose account it is.
+- **Website content** — post titles, note texts, links and statistics read from
+  substack.com.
+
+Leave the rest unticked, and why, in case a reviewer asks:
+
+| Category | Why not |
+|---|---|
+| Health information | Nothing of the kind is read. |
+| Financial and payment information | Only counts of paid subscribers, never amounts, prices, transactions or payment details. |
+| Authentication information | The session cookie is never read, copied or stored; the browser sends it, as it does for the site itself. |
+| Personal communications | Only the user's own published Notes and public post titles. No email, DMs or private messages. |
+| Location | Only aggregate subscriber counts per country — no individual's location, and not the user's. Judgement call: if a reviewer asks, the honest answer is that the figure is an aggregate the user already sees in Substack's own dashboard. |
+| Web history | The extension opens its own tabs and never reads browsing history. |
+| User activity | No click, keystroke, mouse or network monitoring. |
+
+Then tick the three certifications — all three are true, since nothing is ever
+transmitted:
+
+- does not sell or transfer user data to third parties;
+- does not use or transfer it for purposes unrelated to the single purpose;
+- does not use or transfer it to determine creditworthiness or for lending.
+
+Privacy policy URL: `https://github.com/polmarza/substack-dashboard/blob/main/PRIVACY.md`
+
+### The one thing nobody can fill in for you
+
+On the Settings page: enter the **publisher contact email** and complete the
+verification email Google sends. The item cannot be published until it is
+verified.
 
 ### English (paste these)
 
@@ -111,6 +145,9 @@ Both are used only to open a background tab at the user's own publication and re
 ```
 
 #### Remote code justification
+
+Answering "No" to the remote-code question disables this field — which is the
+right answer here. Keep the text for the record, in case a reviewer asks.
 
 _554 de 1000 caracteres._
 
@@ -202,6 +239,9 @@ Ambos se usan solo para abrir una pestaña en segundo plano en la publicación d
 
 #### Justificación del código remoto
 
+Al responder «No» a la pregunta de código remoto, el campo se bloquea — y «No» es
+la respuesta correcta aquí. El texto queda por si un revisor pregunta.
+
 _528 de 1000 caracteres._
 
 ```text
@@ -260,8 +300,7 @@ with.
 
 ### Data usage disclosures
 
-The extension collects no user data at all, so every category is left unticked.
-See the certification checkboxes in the Privacy practices section above.
+See **Data use — what to tick** above.
 
 ---
 
@@ -311,6 +350,4 @@ Substack Inc., usada aquí solo para describir con qué funciona la extensión.
 
 ### Declaración de uso de datos
 
-La extensión no recoge ningún dato del usuario, así que no se marca ninguna
-categoría. Las casillas de certificación están en la sección de prácticas de
-privacidad, más arriba.
+Ver **Data use — what to tick**, más arriba.

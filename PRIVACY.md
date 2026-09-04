@@ -4,9 +4,15 @@ _Last updated: 4 September 2026 · [Versión en español más abajo](#política-
 
 ## The short version
 
-The extension does not collect, transmit, sell or share any of your data. There
-is no server, no account, no analytics and no third party. Everything it reads
-stays inside your own browser.
+The extension reads your own Substack statistics and keeps them on your own
+computer. It never transmits them: there is no server, no account, no analytics
+and no third party. It does not sell or share anything with anyone.
+
+Chrome asks every extension to declare what user data it handles, including data
+that never leaves the device. Ours handles two of Chrome's categories, both
+locally: **personally identifiable information** (your Substack display name and
+handle, so the dashboard can show whose account it is) and **website content**
+(your post titles, note texts, links and statistics read from substack.com).
 
 ## What it reads
 
@@ -76,9 +82,16 @@ _Última actualización: 4 de septiembre de 2026_
 
 ## En corto
 
-La extensión no recoge, ni envía, ni vende, ni comparte ningún dato tuyo. No hay
-servidor, ni cuenta, ni analítica, ni terceros. Todo lo que lee se queda dentro
-de tu propio navegador.
+La extensión lee tus propias estadísticas de Substack y las guarda en tu propio
+ordenador. Nunca las transmite: no hay servidor, ni cuenta, ni analítica, ni
+terceros. No vende ni comparte nada con nadie.
+
+Chrome pide a toda extensión que declare qué datos del usuario maneja, incluidos
+los que nunca salen del dispositivo. La nuestra maneja dos de las categorías de
+Chrome, y las dos en local: **información de identificación personal** (tu nombre
+y tu identificador de Substack, para que el panel sepa de quién es la cuenta) y
+**contenido del sitio web** (los títulos de tus posts, el texto de tus notas, los
+enlaces y las estadísticas que lee de substack.com).
 
 ## Qué lee
 
