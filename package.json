@@ -12,7 +12,8 @@
     "start": "NODE_NO_WARNINGS=1 node tools/server.mjs 8787",
     "install-service": "node tools/install-service.mjs",
     "uninstall-service": "node tools/install-service.mjs --uninstall",
-    "demo": "python3 tools/make_demo.py demo"
+    "demo": "python3 tools/make_demo.py demo",
+    "skill-template": "python3 tools/make_skill_template.py"
   },
   "license": "MIT",
   "type": "module",
