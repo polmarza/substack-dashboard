@@ -23,6 +23,43 @@ const page = await browser.newPage({
 await page.goto('file://' + DEMO, { waitUntil: 'load' });
 await page.waitForTimeout(600);
 
+// Resalta un elemento con un recuadro rojo y una etiqueta, para que en el README se vea
+// de un vistazo qué distingue una captura de la siguiente. Solo afecta a la imagen.
+const annotate = async (selector, text) => {
+  await page.evaluate(({ selector, text }) => {
+    const el = document.querySelector(selector);
+    if (!el) throw new Error('no encuentro ' + selector);
+    const r = el.getBoundingClientRect();
+    const RED = '#e5484d', pad = 5, add = (styles, txt) => {
+      const n = document.createElement('div');
+      n.className = '__annot';
+      if (txt) n.textContent = txt;
+      Object.assign(n.style, { position: 'fixed', zIndex: '9999', pointerEvents: 'none' }, styles);
+      document.body.appendChild(n);
+    };
+    add({
+      left: (r.left - pad) + 'px', top: (r.top - pad) + 'px',
+      width: (r.width + pad * 2) + 'px', height: (r.height + pad * 2) + 'px',
+      border: `3px solid ${RED}`, borderRadius: '10px',
+      boxShadow: `0 0 0 4px ${RED}22`, boxSizing: 'border-box',
+    });
+    // A la derecha, no debajo: debajo del conmutador hay contenido y la etiqueta lo taparía.
+    add({
+      left: (r.right + pad + 3) + 'px', top: (r.top + r.height / 2 - 7) + 'px',
+      width: '0', height: '0', borderTop: '7px solid transparent',
+      borderBottom: '7px solid transparent', borderRight: `9px solid ${RED}`,
+    });
+    add({
+      left: (r.right + pad + 12) + 'px', top: (r.top - pad) + 'px',
+      height: (r.height + pad * 2) + 'px', display: 'flex', alignItems: 'center',
+      background: RED, color: '#fff', padding: '0 13px', borderRadius: '8px',
+      font: '600 13px/1.2 system-ui, -apple-system, sans-serif', whiteSpace: 'nowrap',
+      boxShadow: '0 2px 10px rgba(0,0,0,.25)', boxSizing: 'border-box',
+    }, text);
+  }, { selector, text });
+};
+const clearAnnotations = () => page.evaluate(() => document.querySelectorAll('.__annot').forEach(n => n.remove()));
+
 const shot = async (name) => {
   await page.waitForTimeout(400);
   await page.screenshot({ path: path.join(OUT, name) });
@@ -30,11 +67,15 @@ const shot = async (name) => {
 };
 
 // 1. Comparativa, métricas absolutas (vista por defecto)
+await annotate('#mode button[data-mode="abs"]', 'Modo: cifras absolutas');
 await shot('comparison-absolute.png');
+await clearAnnotations();
 
 // 2. Comparativa, métricas relativas: mismo dato, normalizado por audiencia
 await page.click('#mode button[data-mode="rel"]');
+await annotate('#mode button[data-mode="rel"]', 'Modo: normalizado por audiencia');
 await shot('comparison-relative.png');
+await clearAnnotations();
 
 // 3. Vista general de una publicación: tarjetas, suscriptores, fuentes y vistas por post
 await page.click('#mode button[data-mode="abs"]');

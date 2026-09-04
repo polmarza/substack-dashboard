@@ -9,7 +9,7 @@ Substack no tiene API pública. Su panel de escritor habla con una API privada e
 
 ## Qué aspecto tiene
 
-Las capturas usan **datos ficticios** generados con `npm run demo`. No aparece ninguna publicación real.
+Las capturas usan **datos ficticios** generados con `npm run demo`. No aparece ninguna publicación real. El recuadro rojo es una anotación de esta documentación, no forma parte de la interfaz.
 
 **Comparativa entre publicaciones, cifras absolutas.** La lista más grande gana en casi todo y el top 10 global lo copa una sola publicación:
 
