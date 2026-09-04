@@ -43,12 +43,12 @@ await page.waitForTimeout(500);
 await page.evaluate(() => window.scrollTo(0, 0));
 await shot('publication-overview.png');
 
-// 4. El detalle de un post, con sus fuentes de tráfico y su primera semana
+// 4. El detalle desplegado bajo el post pulsado
 await page.click('#posts tbody tr[data-id]');
 await page.waitForTimeout(400);
 await page.evaluate(() => {
-  const d = document.querySelector('#detail');
-  window.scrollTo({ top: Math.max(0, d.getBoundingClientRect().top + window.scrollY - 260) });
+  const r = document.querySelector('#posts tbody tr.selected');
+  window.scrollTo({ top: Math.max(0, r.getBoundingClientRect().top + window.scrollY - 200) });
 });
 await shot('post-detail.png');
 

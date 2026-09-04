@@ -23,7 +23,7 @@ Las capturas usan **datos ficticios** generados con `npm run demo`. No aparece n
 
 ![Vista general de una publicación](docs/publication-overview.png)
 
-**Cualquier post**, con sus fuentes de tráfico, los enlaces más clicados y las vistas diarias de la primera semana:
+**Cualquier post**, desplegado bajo su fila, con sus fuentes de tráfico, los enlaces más clicados y las vistas diarias de la primera semana:
 
 ![Detalle de un post](docs/post-detail.png)
 
@@ -107,7 +107,7 @@ Solo habla con `*.substack.com` (lectura) y con tu `127.0.0.1:8787`. La cookie n
 
 **Pestaña Comparativa** — tabla ordenable de todas las publicaciones (suscriptores, variación a 30 días, posts, vistas, vistas por post, apertura, CTR, reacciones por post, comentarios, altas), gráficos de barras con un color fijo por publicación y un top 10 global de posts.
 
-**Pestaña por publicación** — tarjetas de cabecera, la serie de suscriptores, fuentes de crecimiento, vistas por post en el tiempo y una tabla ordenable con una columna *vs media* que compara cada post con el promedio de posts comparables que calcula el propio Substack. Al pinchar un post ves sus fuentes de tráfico, enlaces más clicados, vistas diarias de la primera semana y (con la app local) cómo se movieron sus números entre sincronizaciones.
+**Pestaña por publicación** — tarjetas de cabecera, la serie de suscriptores, fuentes de crecimiento, vistas por post en el tiempo y una tabla ordenable con una columna *vs media* que compara cada post con el promedio de posts comparables que calcula el propio Substack. Al pinchar un post se despliega ahí mismo, justo bajo su fila, con sus fuentes de tráfico, enlaces más clicados, vistas diarias de la primera semana y (con la app local) cómo se movieron sus números entre sincronizaciones.
 
 El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de posts.
 

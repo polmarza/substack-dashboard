@@ -40,7 +40,7 @@ def derive(h):
 
     # 3. Fuera la evolución entre sincronizaciones, que también depende del histórico.
     i = h.index("    const evo = (pub().history?.posts?.[p.id] || []);")
-    j = h.index("    box.innerHTML = `", i)
+    j = h.index("    return `", i)
     h = h[:i] + h[j:]
     h = h.replace("        ${evoHtml}\n", "")
 
