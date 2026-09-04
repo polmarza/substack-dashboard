@@ -155,7 +155,7 @@ to report deltas (views gained, new subscribers, best movers) on request.
 - **Notes tab** (shown when a notes file is present): reactions, restacks and
   replies per note, with totals and a sortable table.
 
-The range filter (all / 365 / 90 / 30 days) recomputes every post metric. The dashboard is bilingual: it follows the viewer's browser language, Spanish or English, and `?lang=es` / `?lang=en` forces one.
+The range filter (all / 365 / 90 / 30 days) recomputes every post metric. The interface is in English by default with a Spanish switcher in the header; the reader's own post and note titles are shown untranslated.
 
 ## Notes and limits
 

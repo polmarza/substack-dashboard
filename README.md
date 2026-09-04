@@ -121,7 +121,7 @@ It only talks to `*.substack.com` (read-only) and your own `127.0.0.1:8787`. The
 
 A range filter (all / 365 / 90 / 30 days) recomputes every post metric.
 
-**Language.** The dashboard follows the browser it is opened in: Spanish when the browser is set to Spanish, English otherwise. Append `?lang=es` or `?lang=en` to the URL to force one. Numbers, dates and percentages follow the same choice.
+**Language.** The interface is in English by default, with a switcher in the top right for Spanish. The choice is remembered in that browser, and `?lang=es` / `?lang=en` forces one. Numbers, dates and percentages follow the same choice. Your own titles are never translated: they appear exactly as you published them.
 
 ---
 

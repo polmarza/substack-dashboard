@@ -45,15 +45,17 @@ def derive(h):
     h = h.replace("        ${evoHtml}\n", "")
 
     # 4. Fuera la barra de sincronización de la cabecera.
-    bar = """    <div class="syncbar" id="syncbar" hidden>
-      <span class="syncstate" id="syncstate"></span>
-      <button class="btn" id="login-btn" data-i18n="signIn" hidden></button>
-      <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
-    </div>
-  </header>
-  <pre class="synclog" id="synclog" hidden></pre>"""
+    bar = """      <div class="syncbar" id="syncbar" hidden>
+        <span class="syncstate" id="syncstate"></span>
+        <button class="btn" id="login-btn" data-i18n="signIn" hidden></button>
+        <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
+      </div>
+"""
     assert bar in h, "no encuentro la barra de sincronización"
-    h = h.replace(bar, "  </header>")
+    h = h.replace(bar, "")
+    log = '  <pre class="synclog" id="synclog" hidden></pre>\n'
+    assert log in h, "no encuentro el registro de sincronización"
+    h = h.replace(log, "")
 
     # 5. Y sus reglas CSS, que sin la barra no las usa nadie.
     h = re.sub(r"^  \.(syncbar|syncstate|synclog)\b[^\n]*\n", "", h, flags=re.M)

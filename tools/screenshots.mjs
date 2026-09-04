@@ -81,7 +81,7 @@ await clearAnnotations();
 
 // 3. Vista general de una publicación: tarjetas, suscriptores, fuentes y vistas por post
 await page.click('#mode button[data-mode="abs"]');
-await page.click('#tabs .tab[data-idx="0"]');
+await page.selectOption('#pubsel', '0');
 await page.waitForTimeout(500);
 await page.evaluate(() => window.scrollTo(0, 0));
 await shot('publication-overview.png');
@@ -104,7 +104,7 @@ await page.evaluate(() => {
 await shot('subscribers-map.png');
 
 // 6. Notas: rendimiento de la parte social de Substack
-await page.click('#tabs .tab[data-idx="-2"]');
+await page.click('#section button[data-section="notes"]');
 await page.waitForTimeout(400);
 await page.evaluate(() => window.scrollTo(0, 0));
 await shot('notes.png');

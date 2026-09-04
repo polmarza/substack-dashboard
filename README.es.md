@@ -121,7 +121,7 @@ Solo habla con `*.substack.com` (lectura) y con tu `127.0.0.1:8787`. La cookie n
 
 El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de posts.
 
-**Idioma.** El panel sigue al navegador desde el que se abre: español si lo está, inglés en cualquier otro caso. Añade `?lang=es` o `?lang=en` a la URL para forzar uno. Los números, las fechas y los porcentajes siguen la misma elección.
+**Idioma.** La interfaz está en inglés por defecto, con un selector arriba a la derecha para pasar a español. La elección se recuerda en ese navegador, y `?lang=es` o `?lang=en` fuerza una. Los números, las fechas y los porcentajes siguen la misma elección. Tus propios títulos nunca se traducen: aparecen tal como los publicaste.
 
 ---
 
