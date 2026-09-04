@@ -43,6 +43,24 @@ SOURCES = [("Search", 0.28), ("Notes", 0.22), ("Recommendations", 0.19),
            ("Direct", 0.14), ("Social", 0.10), ("Import", 0.07)]
 REFERRERS = [("email", 0.72), ("direct", 0.11), ("search", 0.07),
              ("substack app", 0.06), ("notes", 0.04)]
+# Reparto geográfico inventado, con un país dominante como suele ocurrir en una lista real.
+GEO = [("US", 0.34), ("GB", 0.14), ("DE", 0.09), ("CA", 0.07), ("FR", 0.06), ("ES", 0.05),
+       ("AU", 0.045), ("NL", 0.035), ("BR", 0.03), ("IN", 0.03), ("IT", 0.025), ("SE", 0.02),
+       ("MX", 0.02), ("JP", 0.015), ("PL", 0.012), ("AR", 0.01), ("ZA", 0.008), ("NO", 0.007)]
+NOTE_TEXTS = [
+    "The thing nobody tells you about writing weekly: the hard part is not the writing.",
+    "Spent the morning reading my own archive. Half of it I would not publish today.",
+    "A reader replied to say they had forwarded the last issue to their team. That is the whole job.",
+    "Unpopular opinion: open rate is the least useful number on your dashboard.",
+    "Three drafts in the folder, none of them ready. That is a normal week.",
+    "The post I almost deleted is the one people keep quoting back to me.",
+    "Every newsletter is a bet that someone wants to hear from you again next week.",
+    "Changed the subject line an hour before sending. No idea if it helped.",
+    "Small lists are not a problem to fix. They are an audience to serve.",
+    "If a post takes six hours and nobody reads it, it still taught you something.",
+    "Started measuring per subscriber instead of per post. Different picture entirely.",
+    "Note to self: shorter.",
+]
 
 
 def build_pub(cfg, rnd, today):
@@ -141,6 +159,10 @@ def build_pub(cfg, rnd, today):
             "totals": [{"name": "subscribers", "total": total_new}]},
         "growth_events": {"pubEvents": []},
         "network_attribution": {"rows": []},
+        "geo": [{"publication_id": cfg["id"], "granularity": "global", "location": code,
+                 "metric": "free signups", "value": max(1, int(cfg["end_subs"] * w * rnd.uniform(.85, 1.15)))}
+                for code, w in GEO],
+        "geo_total": {"global": {"locations": len(GEO), "total": cfg["end_subs"]}},
     }
 
 
@@ -153,6 +175,24 @@ def main():
         with open(os.path.join(OUT, f"{cfg['subdomain']}.json"), "w", encoding="utf-8") as f:
             json.dump(ds, f, ensure_ascii=False)
         print(f"  {cfg['name']}: {len(ds['posts'])} posts, {cfg['end_subs']} suscriptores (ficticios)")
+    # Notas de la cuenta, con su propio archivo, igual que en los datos reales.
+    notes = []
+    for i, text in enumerate(NOTE_TEXTS):
+        when = today - datetime.timedelta(days=int(i * 21 + rnd.random() * 10))
+        reactions = max(0, int(rnd.gauss(9, 6)))
+        notes.append({
+            "id": 700000 + i, "date": when.isoformat() + "Z", "body": text,
+            "reactions": reactions, "restacks": max(0, int(reactions * rnd.uniform(0, .35))),
+            "replies": max(0, int(reactions * rnd.uniform(0, .6))), "attachments": 0,
+            "url": "https://substack.com/@example/note/c-%d" % (700000 + i),
+            "publication_id": PUBS[0]["id"],
+        })
+    with open(os.path.join(OUT, "notes.json"), "w", encoding="utf-8") as f:
+        json.dump({"kind": "notes", "fetched_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                   "user": {"id": 900000, "handle": "example", "name": "Example Author"},
+                   "notes": notes}, f, ensure_ascii=False)
+    print(f"  {len(notes)} notas (ficticias)")
+
     sys.path.insert(0, os.path.join(HERE, "..", "substack-dashboard", "scripts"))
     import build as builder
     builder.build(OUT, os.path.join(OUT, "dashboard.html"))

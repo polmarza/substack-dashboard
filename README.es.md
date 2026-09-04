@@ -27,6 +27,14 @@ Las capturas usan **datos ficticios** generados con `npm run demo` y salen en in
 
 ![Detalle de un post](docs/post-detail.png)
 
+**De dónde son tus suscriptores**, en un mapamundi sombreado por país y con las cifras exactas al lado:
+
+![Suscriptores por país](docs/subscribers-map.png)
+
+**Las notas**, la otra mitad de Substack, medidas por reacciones, restacks y respuestas:
+
+![Notas](docs/notes.png)
+
 ### Métricas absolutas y relativas
 
 Las cifras en bruto favorecen a los posts recientes: uno publicado a 1.800 suscriptores superará a otro publicado a 200, aunque el antiguo llegara a una porción mucho mayor de su audiencia. Triplicar los "me gusta" después de triplicar la lista no es una mejora.
@@ -107,7 +115,9 @@ Solo habla con `*.substack.com` (lectura) y con tu `127.0.0.1:8787`. La cookie n
 
 **Pestaña Comparativa** — tabla ordenable de todas las publicaciones (suscriptores, variación a 30 días, posts, vistas, vistas por post, apertura, CTR, reacciones por post, comentarios, altas), gráficos de barras con un color fijo por publicación y un top 10 global de posts.
 
-**Pestaña por publicación** — tarjetas de cabecera, la serie de suscriptores, fuentes de crecimiento, vistas por post en el tiempo y una tabla ordenable con una columna *vs media* que compara cada post con el promedio de posts comparables que calcula el propio Substack. Al pinchar un post se despliega ahí mismo, justo bajo su fila, con sus fuentes de tráfico, enlaces más clicados, vistas diarias de la primera semana y (con la app local) cómo se movieron sus números entre sincronizaciones.
+**Pestaña por publicación** — tarjetas de cabecera, la serie de suscriptores, fuentes de crecimiento, vistas por post en el tiempo, un mapamundi de suscriptores por país y una tabla ordenable con una columna *vs media* que compara cada post con el promedio de posts comparables que calcula el propio Substack. Al pinchar un post se despliega ahí mismo, justo bajo su fila, con sus fuentes de tráfico, enlaces más clicados, vistas diarias de la primera semana y (con la app local) cómo se movieron sus números entre sincronizaciones.
+
+**Pestaña Notas** — las notas de Substack medidas por reacciones, restacks y respuestas. Substack no expone por esta vía cuántas veces se ha visto una nota, así que ese dato no aparece en lugar de estimarse.
 
 El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de posts.
 
@@ -137,6 +147,10 @@ demo/                   datos ficticios para previsualizar (fuera de git)
 docs/                   capturas usadas en este README
 data/                   tus datos e histórico (fuera de git)
 ```
+
+## Créditos
+
+Los contornos de los países proceden de [Natural Earth](https://www.naturalearthdata.com/) (escala 1:110m, dominio público), convertidos a trazados SVG e incrustados en el panel por `tools/make_worldmap.py` para que el mapa funcione sin conexión.
 
 ## Avisos
 

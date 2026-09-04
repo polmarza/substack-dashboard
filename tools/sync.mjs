@@ -52,6 +52,8 @@ async function collect() {
   ds.growth_sources = await get(`/api/v1/publication/stats/growth/sources?from_date=${yearAgo}&to_date=${today}&order_by=users&order_direction=desc`);
   ds.growth_events = await get(`/api/v1/publication/stats/growth/events?from_date=${yearAgo}&to_date=${today}`);
   ds.network_attribution = await get('/api/v1/publication/stats/network_attribution');
+  ds.geo = await get('/api/v1/publication/stats/audience_insights/location?metric=free%20signups&granularity=global');
+  ds.geo_total = await get('/api/v1/publication/stats/audience_insights/location/total');
   ds.details = {};
   for (const p of ds.posts) {
     const d = await get(`/api/v1/post_management/detail/${p.id}?offset=0&limit=1`);
@@ -80,6 +82,40 @@ for (const pub of pubs) {
     index.publications.push({ ...pub, error: e.message });
   }
 }
+
+// Las notas cuelgan de la cuenta, no de una publicación, así que se piden una sola vez
+// desde substack.com. Substack no da las vistas de una nota; sí reacciones, restacks y respuestas.
+process.stdout.write('→ notas ... ');
+try {
+  await page.goto('https://substack.com/home', { waitUntil: 'domcontentloaded' });
+  const notes = await page.evaluate(async () => {
+    const get = async (u) => (await fetch(u, { credentials: 'include' })).json();
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    const me = await get('/api/v1/user/profile/self');
+    let cursor = null, out = [], pages = 0;
+    do {
+      const j = await get(`/api/v1/reader/feed/profile/${me.id}` + (cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''));
+      for (const it of j.items || []) {
+        const c = it.comment;
+        if (!c || c.user_id !== me.id) continue;
+        out.push({ id: c.id, date: c.date, body: c.body || '', reactions: c.reaction_count || 0,
+                   restacks: c.restacks || 0, replies: c.children_count || 0,
+                   attachments: (c.attachments || []).length,
+                   url: `https://substack.com/@${me.handle}/note/c-${c.id}`,
+                   publication_id: c.publication_id || null });
+      }
+      cursor = j.nextCursor; pages++;
+      await sleep(350);
+    } while (cursor && pages < 40);
+    return { kind: 'notes', fetched_at: new Date().toISOString(), user: { id: me.id, handle: me.handle, name: me.name }, notes: out };
+  });
+  await fs.writeFile(path.join(DATA_DIR, 'notes.json'), JSON.stringify(notes));
+  index.notes = notes.notes.length;
+  console.log(`${notes.notes.length} notas`);
+} catch (e) {
+  console.log(`ERROR: ${e.message}`);
+}
+
 await fs.writeFile(path.join(DATA_DIR, 'index.json'), JSON.stringify(index, null, 2));
 await ctx.close();
 db.close();

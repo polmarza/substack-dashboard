@@ -95,5 +95,19 @@ await page.evaluate(() => {
 });
 await shot('post-detail.png');
 
+// 5. Mapa de suscriptores por país
+await page.evaluate(() => { const b = document.querySelector('#detail-close'); if (b) b.click(); });
+await page.evaluate(() => {
+  const c = document.querySelector('#geo-map').closest('.card');
+  window.scrollTo({ top: Math.max(0, c.getBoundingClientRect().top + window.scrollY - 24) });
+});
+await shot('subscribers-map.png');
+
+// 6. Notas: rendimiento de la parte social de Substack
+await page.click('#tabs .tab[data-idx="-2"]');
+await page.waitForTimeout(400);
+await page.evaluate(() => window.scrollTo(0, 0));
+await shot('notes.png');
+
 await browser.close();
 console.log('Capturas listas en docs/ (datos ficticios).');

@@ -46,12 +46,17 @@ for (const p of index.publications) {
     growth_totals: Object.fromEntries((d.growth_sources?.totals || []).map(t => [t.name, t.total])),
     growth_events: d.growth_events?.pubEvents || [],
     attribution: d.network_attribution?.rows || [],
+    geo: (Array.isArray(d.geo) ? d.geo : []).map(r => ({ code: r.location, value: r.value })).filter(r => r.code && r.value > 0),
+    geo_total: d.geo_total?.global?.total ?? null,
     history: db ? history(db, p.id) : null,
     posts,
   });
 }
 db?.close();
-const payload = { generated_at: new Date().toISOString(), user: index.user, publications: pubs };
+// Las notas viven en su propio archivo porque pertenecen a la cuenta, no a una publicación.
+let notes = null;
+try { notes = JSON.parse(await fs.readFile(path.join(DATA_DIR, 'notes.json'), 'utf8')); } catch {}
+const payload = { generated_at: new Date().toISOString(), user: index.user, publications: pubs, notes: notes?.notes || null };
 const template = await fs.readFile(path.join(ROOT, 'tools', 'template.html'), 'utf8');
 const json = JSON.stringify(payload).replace(/<\/script/gi, '<\\/script');
 const html = template.replace('/*__DATA__*/null', json);

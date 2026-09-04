@@ -32,6 +32,8 @@ async function collect(sub) {
   ds.growth_sources = await get(base, `/api/v1/publication/stats/growth/sources?from_date=${yearAgo}&to_date=${today}&order_by=users&order_direction=desc`);
   ds.growth_events = await get(base, `/api/v1/publication/stats/growth/events?from_date=${yearAgo}&to_date=${today}`);
   ds.network_attribution = await get(base, '/api/v1/publication/stats/network_attribution');
+  ds.geo = await get(base, '/api/v1/publication/stats/audience_insights/location?metric=free%20signups&granularity=global');
+  ds.geo_total = await get(base, '/api/v1/publication/stats/audience_insights/location/total');
   ds.details = {};
   let i = 0;
   for (const p of ds.posts) {
@@ -65,6 +67,31 @@ async function sync() {
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(`El servidor rechazó ${pub.subdomain}: ${j.error || r.status}`);
       await say(`   ${pub.subdomain}: ${ds.posts.length} posts, ${ds.summary?.totalEmail ?? '?'} suscriptores`);
+    }
+    await say('→ notas…');
+    try {
+      const meAcc = await get('https://substack.com', '/api/v1/user/profile/self');
+      let cursor = null, out = [], pages = 0;
+      do {
+        const j = await get('https://substack.com', `/api/v1/reader/feed/profile/${meAcc.id}` + (cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''));
+        for (const it of j.items || []) {
+          const c = it.comment;
+          if (!c || c.user_id !== meAcc.id) continue;
+          out.push({ id: c.id, date: c.date, body: c.body || '', reactions: c.reaction_count || 0,
+                     restacks: c.restacks || 0, replies: c.children_count || 0,
+                     attachments: (c.attachments || []).length,
+                     url: `https://substack.com/@${meAcc.handle}/note/c-${c.id}`,
+                     publication_id: c.publication_id || null });
+        }
+        cursor = j.nextCursor; pages++;
+        await sleep(350);
+      } while (cursor && pages < 40);
+      const payload = { kind: 'notes', fetched_at: new Date().toISOString(), source: 'extension',
+                        user: { id: meAcc.id, handle: meAcc.handle, name: meAcc.name }, notes: out };
+      await fetch(`${SERVER}/api/import?subdomain=notes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      await say(`   ${out.length} notas`);
+    } catch (e) {
+      await say('   notas: ' + e.message, false);
     }
     await say('Generando el panel…');
     await fetch(`${SERVER}/api/build`, { method: 'POST' });

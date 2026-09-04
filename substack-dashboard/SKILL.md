@@ -68,15 +68,29 @@ collector:
 
 1. Navigate the browser to `https://<subdomain>.substack.com/publish/home`.
 2. Run the contents of `assets/collect.js` in that page. It fetches posts, per-post
-   stats, summaries, the subscriber series and growth sources, then triggers a
-   download named `substack_<subdomain>.json`. It returns a small summary object
-   (`{subdomain, posts, subscribers, bytes}`) so you can confirm it worked.
+   stats, summaries, the subscriber series, growth sources and the country
+   breakdown, then triggers a download named `substack_<subdomain>.json`. It
+   returns a small summary object (`{subdomain, posts, subscribers, bytes}`) so
+   you can confirm it worked.
 3. Be patient: the collector paces itself at roughly 3 requests/second to stay
    well under Substack's limits, so a publication with dozens of posts takes a
    minute or two. Don't fire requests faster.
 
 Repeat for every publication. Prefer navigating and running the collector as a
 batch per publication when the browser tool supports batching.
+
+### 3b. Collect the Notes (once, not per publication)
+
+Notes belong to the account rather than to any publication, so this runs once:
+
+1. Navigate to `https://substack.com/home`.
+2. Run `assets/collect_notes.js`. It pages through the author's own notes and
+   downloads `substack_notes.json`.
+
+Substack does not expose how many times a note was *viewed* through this API.
+What it does give is reactions, restacks and replies, and that is what the
+dashboard shows. Say so if the user asks why views are missing rather than
+leaving them to wonder.
 
 ### 4. Gather the downloaded files
 
@@ -88,6 +102,17 @@ Search both, newest first, e.g.:
 ```bash
 mdfind -name 'substack_' 2>/dev/null; ls -t ~/Downloads/substack_*.json 2>/dev/null
 ```
+
+A download sometimes never gets its final name and stays as a **hidden temp file**
+in the download folder instead. If a file you expected is missing, look for recent
+hidden files and identify them by content rather than by name:
+
+```bash
+ls -lat ~/Downloads/.* 2>/dev/null | head
+```
+
+Each publication dataset is JSON with a `subdomain` field; the notes file has
+`"kind":"notes"`. Read the first bytes to tell them apart, then rename accordingly.
 
 Move all of them into one folder, e.g. a `substack-data/` directory in the
 working directory. If a file is missing, re-run step 3 for that publication.
@@ -123,9 +148,12 @@ to report deltas (views gained, new subscribers, best movers) on request.
   for subscribers / views-per-post / open rate with a fixed color per publication,
   and a global top-10 of posts across every publication.
 - **Per-publication tab**: headline tiles, the subscriber line, growth sources,
-  a views-per-post column chart, and a sortable post table. Clicking a post opens
-  its detail: traffic sources, most-clicked links, first-week daily views, and how
-  it compares to the publication's typical post (Substack's own benchmark).
+  a views-per-post column chart, a world map of subscribers by country, and a
+  sortable post table. Clicking a post expands its detail in place: traffic
+  sources, most-clicked links, first-week daily views, and how it compares to the
+  publication's typical post (Substack's own benchmark).
+- **Notes tab** (shown when a notes file is present): reactions, restacks and
+  replies per note, with totals and a sortable table.
 
 The range filter (all / 365 / 90 / 30 days) recomputes every post metric. The dashboard is bilingual: it follows the viewer's browser language, Spanish or English, and `?lang=es` / `?lang=en` forces one.
 

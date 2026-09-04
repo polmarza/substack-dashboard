@@ -65,7 +65,7 @@ def growth_sources(gs):
 
 def load_datasets(data_dir):
     files = sorted(glob.glob(os.path.join(data_dir, "*.json")))
-    datasets = []
+    datasets, notes = [], []
     for f in files:
         if os.path.basename(f) == "index.json":
             continue
@@ -73,15 +73,18 @@ def load_datasets(data_dir):
             ds = json.load(open(f, encoding="utf-8"))
         except Exception:
             continue
+        if isinstance(ds, dict) and ds.get("kind") == "notes":
+            notes.append(ds)
+            continue
         if isinstance(ds, dict) and isinstance(ds.get("posts"), list) and (ds.get("subdomain") or ds.get("host")):
             if not ds.get("subdomain"):
                 ds["subdomain"] = str(ds.get("host", "")).split(".")[0]
             datasets.append(ds)
-    return datasets
+    return datasets, notes
 
 
 def build(data_dir, out_path):
-    datasets = load_datasets(data_dir)
+    datasets, notes_files = load_datasets(data_dir)
     if not datasets:
         raise SystemExit(f"No encontré datasets de Substack en {data_dir}. "
                          "Descarga primero los JSON con assets/collect.js.")
@@ -100,12 +103,20 @@ def build(data_dir, out_path):
             "summary": ds.get("summary"), "summary_v2": ds.get("summary_v2"),
             "subscribers_ts": series, "growth_sources": growth_sources(ds.get("growth_sources") or {}),
             "growth_events": (ds.get("growth_events") or {}).get("pubEvents") or [],
-            "attribution": (ds.get("network_attribution") or {}).get("rows") or [], "posts": posts,
+            "attribution": (ds.get("network_attribution") or {}).get("rows") or [],
+            "geo": [{"code": r.get("location"), "value": r.get("value")}
+                    for r in (ds.get("geo") if isinstance(ds.get("geo"), list) else [])
+                    if r.get("location") and (r.get("value") or 0) > 0],
+            "geo_total": ((ds.get("geo_total") or {}).get("global") or {}).get("total"),
+            "posts": posts,
         })
     # Publicación principal primero (más suscriptores)
     pubs.sort(key=lambda p: (p.get("summary") or {}).get("totalEmail") or 0, reverse=True)
+    # Las notas pertenecen a la cuenta, no a una publicación concreta.
+    all_notes = [n for f in notes_files for n in (f.get("notes") or [])]
     payload = {"generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-               "user": None, "publications": pubs}
+               "user": (notes_files[0].get("user") if notes_files else None),
+               "publications": pubs, "notes": all_notes or None}
     template = open(TEMPLATE, encoding="utf-8").read()
     blob = json.dumps(payload, ensure_ascii=False).replace("</script", "<\\/script")
     html = template.replace("/*__DATA__*/null", blob)

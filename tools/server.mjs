@@ -17,6 +17,12 @@ function refreshLastSync() {
 
 // Importa un dataset enviado por la extensión de Chrome: lo guarda en data/, lo mete en la base de datos y actualiza index.json.
 function importFromExtension(ds) {
+  // Las notas son de la cuenta, no de una publicación: van a su propio archivo.
+  if (ds && ds.kind === 'notes') {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(path.join(DATA_DIR, 'notes.json'), JSON.stringify(ds));
+    return { notes: (ds.notes || []).length };
+  }
   const meta = ds.publication_meta || {};
   const sub = String(ds.subdomain || meta.subdomain || '').replace(/[^a-z0-9-]/gi, '');
   if (!sub || !Array.isArray(ds.posts)) throw new Error('dataset inválido');

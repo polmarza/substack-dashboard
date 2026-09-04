@@ -29,6 +29,9 @@
   ds.growth_sources = await get(`/api/v1/publication/stats/growth/sources?from_date=${yearAgo}&to_date=${today}&order_by=users&order_direction=desc`);
   ds.growth_events = await get(`/api/v1/publication/stats/growth/events?from_date=${yearAgo}&to_date=${today}`);
   ds.network_attribution = await get('/api/v1/publication/stats/network_attribution');
+  // Suscriptores por país (códigos ISO 3166-1 alfa-2) y su total.
+  ds.geo = await get('/api/v1/publication/stats/audience_insights/location?metric=free%20signups&granularity=global');
+  ds.geo_total = await get('/api/v1/publication/stats/audience_insights/location/total');
   ds.details = {};
   for (const p of ds.posts) {
     const d = await get(`/api/v1/post_management/detail/${p.id}?offset=0&limit=1`);
