@@ -21,6 +21,14 @@ function importFromExtension(ds) {
   if (ds && ds.kind === 'notes') {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     fs.writeFileSync(path.join(DATA_DIR, 'notes.json'), JSON.stringify(ds));
+    if (ds.primary_publication_id != null) {
+      try {
+        const f = path.join(DATA_DIR, 'index.json');
+        const idx = JSON.parse(fs.readFileSync(f, 'utf8'));
+        idx.primary_publication_id = ds.primary_publication_id;
+        fs.writeFileSync(f, JSON.stringify(idx, null, 2));
+      } catch {}
+    }
     return { notes: (ds.notes || []).length };
   }
   const meta = ds.publication_meta || {};

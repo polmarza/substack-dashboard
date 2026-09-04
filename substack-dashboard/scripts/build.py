@@ -116,7 +116,9 @@ def build(data_dir, out_path):
     all_notes = [n for f in notes_files for n in (f.get("notes") or [])]
     payload = {"generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                "user": (notes_files[0].get("user") if notes_files else None),
-               "publications": pubs, "notes": all_notes or None}
+               "publications": pubs, "notes": all_notes or None,
+               "primary_publication_id": next((f.get("primary_publication_id") for f in notes_files
+                                               if f.get("primary_publication_id")), None)}
     template = open(TEMPLATE, encoding="utf-8").read()
     blob = json.dumps(payload, ensure_ascii=False).replace("</script", "<\\/script")
     html = template.replace("/*__DATA__*/null", blob)

@@ -62,13 +62,21 @@ const annotate = async (selector, text) => {
 };
 const clearAnnotations = () => page.evaluate(() => document.querySelectorAll('.__annot').forEach(n => n.remove()));
 
+// El panel abre en la publicación principal; para las demás vistas se usa el menú.
+const goTo = async (idx) => {
+  await page.click('#navbtn');
+  await page.click(`#navmenu button[data-idx="${idx}"]`);
+  await page.waitForTimeout(400);
+};
+
 const shot = async (name) => {
   await page.waitForTimeout(400);
   await page.screenshot({ path: path.join(OUT, name) });
   console.log('  →', path.join('docs', name));
 };
 
-// 1. Comparativa, métricas absolutas (vista por defecto)
+// 1. Comparativa, métricas absolutas
+await goTo(-1);
 await annotate('#mode button[data-mode="abs"]', 'Mode: absolute figures');
 await shot('comparison-absolute.png');
 await clearAnnotations();
@@ -81,8 +89,7 @@ await clearAnnotations();
 
 // 3. Vista general de una publicación: tarjetas, suscriptores, fuentes y vistas por post
 await page.click('#mode button[data-mode="abs"]');
-await page.selectOption('#pubsel', '0');
-await page.waitForTimeout(500);
+await goTo(0);
 await page.evaluate(() => window.scrollTo(0, 0));
 await shot('publication-overview.png');
 
@@ -104,8 +111,7 @@ await page.evaluate(() => {
 await shot('subscribers-map.png');
 
 // 6. Notas: rendimiento de la parte social de Substack
-await page.click('#section button[data-section="notes"]');
-await page.waitForTimeout(400);
+await goTo(-2);
 await page.evaluate(() => window.scrollTo(0, 0));
 await shot('notes.png');
 

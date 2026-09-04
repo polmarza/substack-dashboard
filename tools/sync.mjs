@@ -65,7 +65,8 @@ async function collect() {
   return ds;
 }
 
-const index = { fetched_at: new Date().toISOString(), user: { id: profile.id, handle: profile.handle, name: profile.name }, publications: [] };
+const index = { fetched_at: new Date().toISOString(), user: { id: profile.id, handle: profile.handle, name: profile.name },
+                primary_publication_id: profile.primaryPublication?.id ?? null, publications: [] };
 for (const pub of pubs) {
   process.stdout.write(`→ ${pub.subdomain} ... `);
   try {
@@ -107,7 +108,8 @@ try {
       cursor = j.nextCursor; pages++;
       await sleep(350);
     } while (cursor && pages < 40);
-    return { kind: 'notes', fetched_at: new Date().toISOString(), user: { id: me.id, handle: me.handle, name: me.name }, notes: out };
+    return { kind: 'notes', fetched_at: new Date().toISOString(), user: { id: me.id, handle: me.handle, name: me.name },
+             primary_publication_id: me.primaryPublication?.id ?? null, notes: out };
   });
   await fs.writeFile(path.join(DATA_DIR, 'notes.json'), JSON.stringify(notes));
   index.notes = notes.notes.length;

@@ -87,7 +87,8 @@ async function sync() {
         await sleep(350);
       } while (cursor && pages < 40);
       const payload = { kind: 'notes', fetched_at: new Date().toISOString(), source: 'extension',
-                        user: { id: meAcc.id, handle: meAcc.handle, name: meAcc.name }, notes: out };
+                        user: { id: meAcc.id, handle: meAcc.handle, name: meAcc.name },
+                        primary_publication_id: (meAcc.primaryPublication && meAcc.primaryPublication.id) || null, notes: out };
       await fetch(`${SERVER}/api/import?subdomain=notes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       await say(`   ${out.length} notas`);
     } catch (e) {

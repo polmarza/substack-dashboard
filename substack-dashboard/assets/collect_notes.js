@@ -35,6 +35,7 @@
   const ds = {
     kind: 'notes', fetched_at: new Date().toISOString(), source: 'skill',
     user: { id: me.id, handle: me.handle, name: me.name },
+    primary_publication_id: (me.primaryPublication && me.primaryPublication.id) || null,
     notes,
   };
   const body = JSON.stringify(ds);

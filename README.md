@@ -113,11 +113,13 @@ It only talks to `*.substack.com` (read-only) and your own `127.0.0.1:8787`. The
 
 ## What the dashboard shows
 
-**Comparison tab** — a sortable table of every publication (subscribers, 30-day change, posts, views, views/post, open rate, CTR, reactions/post, comments, signups), bar charts with a fixed color per publication, and a global top-10 of posts across all of them.
+**Navigation.** The dashboard opens on your primary publication — the one Substack itself marks as primary. If you run more than one, a `+N` chip beside its name opens a menu with the others, plus **Compare all** and **Notes**. With a single publication that chip never appears.
+
+**Comparison view** — a sortable table of every publication (subscribers, 30-day change, posts, views, views/post, open rate, CTR, reactions/post, comments, signups), bar charts with a fixed color per publication, and a global top-10 of posts across all of them.
 
 **Per-publication tab** — headline tiles, the subscriber line, growth sources, views-per-post over time, a world map of subscribers by country, and a sortable post table with a *vs average* column comparing each post to Substack's own benchmark of comparable posts. Click any post and it expands in place, right under its row, showing its traffic sources, most-clicked links, first-week daily views, and (with the local app) how its numbers moved between syncs.
 
-**Notes tab** — Substack's Notes measured by reactions, restacks and replies. Substack does not expose note view counts through this API, so those are absent rather than estimated.
+**Notes view** — Substack's Notes measured by reactions, restacks and replies. Substack does not expose note view counts through this API, so those are absent rather than estimated.
 
 A range filter (all / 365 / 90 / 30 days) recomputes every post metric.
 

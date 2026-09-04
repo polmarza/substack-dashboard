@@ -144,7 +144,10 @@ to report deltas (views gained, new subscribers, best movers) on request.
 
 ## What the dashboard shows
 
-- **Comparison tab** (default): a sortable table of all publications, bar charts
+- **Opens on the primary publication** (the one Substack marks as primary; falls back
+  to the largest). A `+N` chip next to its name opens a menu with the other
+  publications, the comparison, and Notes.
+- **Comparison view**: a sortable table of all publications, bar charts
   for subscribers / views-per-post / open rate with a fixed color per publication,
   and a global top-10 of posts across every publication.
 - **Per-publication tab**: headline tiles, the subscriber line, growth sources,
@@ -152,8 +155,11 @@ to report deltas (views gained, new subscribers, best movers) on request.
   sortable post table. Clicking a post expands its detail in place: traffic
   sources, most-clicked links, first-week daily views, and how it compares to the
   publication's typical post (Substack's own benchmark).
-- **Notes tab** (shown when a notes file is present): reactions, restacks and
+- **Notes view** (shown when a notes file is present): reactions, restacks and
   replies per note, with totals and a sortable table.
+
+`collect_notes.js` also records which publication Substack considers primary, so
+collecting the notes is what makes the dashboard open on the right one.
 
 The range filter (all / 365 / 90 / 30 days) recomputes every post metric. The interface is in English by default with a Spanish switcher in the header; the reader's own post and note titles are shown untranslated.
 

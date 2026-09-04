@@ -56,7 +56,9 @@ db?.close();
 // Las notas viven en su propio archivo porque pertenecen a la cuenta, no a una publicación.
 let notes = null;
 try { notes = JSON.parse(await fs.readFile(path.join(DATA_DIR, 'notes.json'), 'utf8')); } catch {}
-const payload = { generated_at: new Date().toISOString(), user: index.user, publications: pubs, notes: notes?.notes || null };
+const payload = { generated_at: new Date().toISOString(), user: index.user, publications: pubs,
+  primary_publication_id: index.primary_publication_id ?? notes?.primary_publication_id ?? null,
+  notes: notes?.notes || null };
 const template = await fs.readFile(path.join(ROOT, 'tools', 'template.html'), 'utf8');
 const json = JSON.stringify(payload).replace(/<\/script/gi, '<\\/script');
 const html = template.replace('/*__DATA__*/null', json);
