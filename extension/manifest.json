@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Substack Dashboard sync",
-  "version": "1.4.0",
-  "description": "Collects your Substack publication stats using your Chrome session and sends them to the local dashboard (127.0.0.1:8787).",
+  "name": "Substack Dashboard",
+  "version": "1.5.0",
+  "description": "Your own analytics dashboard for the Substack publications you write: views, opens, reactions, growth and subscribers by country.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Substack Dashboard",
@@ -18,31 +18,18 @@
   },
   "permissions": [
     "storage",
+    "unlimitedStorage",
     "scripting",
     "tabs"
   ],
   "host_permissions": [
     "https://*.substack.com/*",
-    "https://substack.com/*",
-    "http://127.0.0.1:8787/*",
-    "http://localhost:8787/*"
+    "https://substack.com/*"
   ],
   "icons": {
     "16": "icon-16.png",
     "32": "icon-32.png",
     "48": "icon-48.png",
     "128": "icon-128.png"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "http://127.0.0.1:8787/*",
-        "http://localhost:8787/*"
-      ],
-      "js": [
-        "bridge.js"
-      ],
-      "run_at": "document_start"
-    }
-  ]
+  }
 }

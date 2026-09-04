@@ -157,6 +157,10 @@ to report deltas (views gained, new subscribers, best movers) on request.
   publication's typical post (Substack's own benchmark).
 - **Notes view** (shown when a notes file is present): reactions, restacks and
   replies per note, with totals and a sortable table.
+- **Analyze with Claude**: the sparkle icon in the header opens a panel of
+  questions ("which topics work best", "compare the last two months"). Copying
+  one puts the question together with the numbers currently on screen on the
+  clipboard, ready to paste into a conversation. It sends nothing anywhere.
 
 `collect_notes.js` also records which publication Substack considers primary, so
 collecting the notes is what makes the dashboard open on the right one.

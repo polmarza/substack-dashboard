@@ -27,8 +27,8 @@ await page.waitForTimeout(600);
 
 // Resalta un elemento con un recuadro rojo y una etiqueta, para que en el README se vea
 // de un vistazo qué distingue una captura de la siguiente. Solo afecta a la imagen.
-const annotate = async (selector, text) => {
-  await page.evaluate(({ selector, text }) => {
+const annotate = async (selector, text, side = 'right') => {
+  await page.evaluate(({ selector, text, side }) => {
     const el = document.querySelector(selector);
     if (!el) throw new Error('no encuentro ' + selector);
     const r = el.getBoundingClientRect();
@@ -45,20 +45,25 @@ const annotate = async (selector, text) => {
       border: `3px solid ${RED}`, borderRadius: '10px',
       boxShadow: `0 0 0 4px ${RED}22`, boxSizing: 'border-box',
     });
-    // A la derecha, no debajo: debajo del conmutador hay contenido y la etiqueta lo taparía.
+    // Al lado, no debajo: debajo del conmutador hay contenido y la etiqueta lo taparía.
+    // Un elemento pegado al borde derecho lleva la etiqueta a la izquierda para que quepa.
+    const arrow = side === 'left'
+      ? { right: (innerWidth - r.left + pad + 3) + 'px', borderLeft: `9px solid ${RED}` }
+      : { left: (r.right + pad + 3) + 'px', borderRight: `9px solid ${RED}` };
     add({
-      left: (r.right + pad + 3) + 'px', top: (r.top + r.height / 2 - 7) + 'px',
+      ...arrow, top: (r.top + r.height / 2 - 7) + 'px',
       width: '0', height: '0', borderTop: '7px solid transparent',
-      borderBottom: '7px solid transparent', borderRight: `9px solid ${RED}`,
+      borderBottom: '7px solid transparent',
     });
     add({
-      left: (r.right + pad + 12) + 'px', top: (r.top - pad) + 'px',
+      ...(side === 'left' ? { right: (innerWidth - r.left + pad + 12) + 'px' } : { left: (r.right + pad + 12) + 'px' }),
+      top: (r.top - pad) + 'px',
       height: (r.height + pad * 2) + 'px', display: 'flex', alignItems: 'center',
       background: RED, color: '#fff', padding: '0 13px', borderRadius: '8px',
       font: '600 13px/1.2 system-ui, -apple-system, sans-serif', whiteSpace: 'nowrap',
       boxShadow: '0 2px 10px rgba(0,0,0,.25)', boxSizing: 'border-box',
     }, text);
-  }, { selector, text });
+  }, { selector, text, side });
 };
 const clearAnnotations = () => page.evaluate(() => document.querySelectorAll('.__annot').forEach(n => n.remove()));
 
@@ -114,6 +119,15 @@ await shot('subscribers-map.png');
 await goTo(-2);
 await page.evaluate(() => window.scrollTo(0, 0));
 await shot('notes.png');
+
+// 7. El analizador: preguntas listas para pegar en Claude, con los datos de la vista actual
+await goTo(0);
+await page.evaluate(() => window.scrollTo(0, 0));
+await page.click('#analyzebtn');
+await page.waitForTimeout(300);
+await annotate('#analyzebtn', 'Opens from the header', 'left');
+await shot('analyze.png');
+await clearAnnotations();
 
 await browser.close();
 console.log('Capturas listas en docs/ (datos ficticios).');

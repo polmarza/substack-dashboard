@@ -35,6 +35,10 @@ Las capturas usan **datos ficticios** generados con `npm run demo` y salen en in
 
 ![Notas](docs/notes.png)
 
+**Preguntas que vale la pena hacerse**, cada una se copia junto con los números que estás mirando, lista para pegar en Claude:
+
+![Analizar con Claude](docs/analyze.png)
+
 ### Métricas absolutas y relativas
 
 Las cifras en bruto favorecen a los posts recientes: uno publicado a 1.800 suscriptores superará a otro publicado a 200, aunque el antiguo llegara a una porción mucho mayor de su audiencia. Triplicar los "me gusta" después de triplicar la lista no es una mejora.
@@ -59,52 +63,72 @@ Elige una. Las tres producen el mismo panel.
 
 | | Ideal si | Necesitas |
 |---|---|---|
-| **1. Skill de Claude Code** | Solo quieres el panel, sin instalar nada | Claude Code |
-| **2. App local** | Uso recurrente, histórico en el tiempo | Node 22+ |
-| **3. Extensión de Chrome** | Usas la app local pero el login de Playwright falla | Node 22+ y Chrome |
+| **1. Extensión de Chrome** | Instalar, pulsar y ya está | Chrome |
+| **2. Skill de Claude Code** | Que Claude además te lea los números | Claude Code |
+| **3. App local** | Quedarte con los datos crudos en archivos | Node 22+ |
 
 ---
 
-### 1. Skill de Claude Code (lo más simple)
+### 1. Extensión de Chrome (lo más simple)
 
-Instala la skill y pide tus estadísticas. Claude abre un navegador, tú inicias sesión en Substack, y Claude descarga todo y construye el panel.
+Todo vive dentro de la extensión: recoge tus estadísticas con la sesión de
+Substack que ya tienes en tu Chrome, las guarda en el almacenamiento del propio
+navegador y enseña el panel como una página suya. Sin servidor, sin Node y sin
+volver a iniciar sesión.
+
+1. Abre `chrome://extensions`, activa el **modo de desarrollador** y pulsa **Cargar descomprimida**.
+2. Elige la carpeta `extension/`.
+3. Pulsa el icono de la extensión, luego **Sync all publications** y después **Open the dashboard**.
+
+Abre una pestaña en segundo plano en cada una de tus publicaciones, ejecuta allí
+el mismo recolector de solo lectura y guarda el resultado en `chrome.storage`, en
+tu ordenador. No habla con nada más, y la cookie de sesión no sale del navegador.
+(Funciona así —inyectando en una pestaña real en vez de pedir los datos desde el
+service worker— porque la cookie de sesión de Substack no viaja de forma fiable
+desde el contexto de fondo de una extensión.)
+
+Cada sincronización además acumula histórico, así que la línea de suscriptores
+crece más allá de los 30 días que devuelve la propia API de Substack.
+
+### 2. Skill de Claude Code
+
+Instala la skill y pide tus estadísticas. Claude abre un navegador, tú inicias
+sesión en Substack, y Claude descarga todo y construye el panel.
 
 ```bash
 cp -R substack-dashboard ~/.claude/skills/
 ```
 
-Después basta con pedirlo: *"enséñame cómo van mis posts de Substack"*.
+Luego basta con pedirlo: *«enséñame cómo van mis posts de Substack»*.
 
-La skill es autocontenida (`SKILL.md`, el recolector para el navegador, un generador en Python sin dependencias y la documentación de los endpoints). No necesita servidor, ni Playwright, ni extensión. Ver [`substack-dashboard/SKILL.md`](substack-dashboard/SKILL.md).
+La skill es autocontenida (`SKILL.md`, un recolector para el navegador, un
+generador en Python sin dependencias y una referencia de endpoints). No necesita
+servidor, ni Playwright, ni extensión. Ver [`substack-dashboard/SKILL.md`](substack-dashboard/SKILL.md).
 
-### 2. App local
+### 3. App local
 
-Un servidor Node pequeño que sirve el panel, guarda un histórico en SQLite y añade un botón **Sincronizar**.
+Para cuando quieres el JSON crudo en disco: un servidor Node pequeño que sirve el
+panel y guarda un histórico en SQLite.
 
 ```bash
 npm install
 npm start          # http://127.0.0.1:8787/
 ```
 
-El botón **Sincronizar** del panel dispara la extensión de Chrome (opción 3), que es la vía que lleva tu sesión de forma fiable. Si la extensión no está instalada, el panel te lo dice y te enseña cómo añadirla. También puedes sincronizar desde la terminal con `npm run sync`, que usa Playwright y necesita antes su propio `npm run login`.
+Recoger los datos es un paso aparte: `npm run sync` usa Playwright y necesita
+`npm run login` antes, y `npm run import <carpeta>` toma los JSON que descarga el
+recolector de la skill. Después, `npm run build` regenera `dashboard.html`.
 
-¿Quieres verlo antes de conectar nada? `npm run demo` construye un panel con datos ficticios.
+¿Quieres verlo antes de conectar nada? `npm run demo` construye un panel con
+datos ficticios.
 
-Equivalentes por terminal: `npm run login`, `npm run sync` (o `npm run sync -- mi-newsletter` para una sola), `npm run build`, `npm run import`.
+Para arrancar el servidor al iniciar sesión (macOS): `npm run install-service`
+(se deshace con `npm run uninstall-service`).
 
-Para que arranque solo al iniciar sesión (macOS): `npm run install-service` (se deshace con `npm run uninstall-service`).
-
-> **Sobre el inicio de sesión.** Playwright usa un perfil de Chrome aparte, así que hay que iniciar sesión otra vez ahí. Si el código por email de Substack no llega, usa *"Iniciar sesión con contraseña"* en esa pantalla, o pasa a la opción 3, que reutiliza la sesión que ya tienes.
-
-### 3. Extensión de Chrome
-
-Usa la sesión de Substack que ya tienes en tu Chrome normal, así que no hay segundo inicio de sesión.
-
-1. Abre `chrome://extensions`, activa **Modo de desarrollador** y pulsa **Cargar descomprimida**.
-2. Elige la carpeta `extension/`.
-3. Con `npm start` en marcha, pulsa el icono de la extensión y **Sincronizar todas las publicaciones**.
-
-Abre una pestaña efímera en segundo plano en cada una de tus publicaciones, ejecuta ahí el mismo recolector de solo lectura y envía el resultado a tu `127.0.0.1:8787`. No habla con nada más, y la cookie de sesión nunca sale del navegador. (Funciona así, inyectando en una pestaña real en vez de pedir los datos desde el service worker, porque la cookie de sesión de Substack no viaja de forma fiable desde el contexto de fondo de una extensión.)
+> **Sobre el inicio de sesión.** Playwright usa un perfil de Chrome aparte, así
+> que hay que volver a entrar allí. Si el código por correo de Substack no llega,
+> usa *«Iniciar sesión con contraseña»* en esa pantalla — o usa la opción 1, que
+> reutiliza la sesión que ya tienes.
 
 ---
 
@@ -122,6 +146,8 @@ Abre una pestaña efímera en segundo plano en cada una de tus publicaciones, ej
 
 **Vista Notas** — las notas de Substack medidas por reacciones, restacks y respuestas. Substack no expone por esta vía cuántas veces se ha visto una nota, así que ese dato no aparece en lugar de estimarse.
 
+**Analizar con Claude** — el icono de destellos de la cabecera abre una capa con preguntas que vale la pena hacerse sobre lo que estás mirando («qué temas funcionan mejor», «compara el último mes con el anterior», «dónde concentrar el esfuerzo»). Al copiar una, se lleva la pregunta *y* los números que tienes delante, listos para pegar en Claude. No se envía nada a ningún sitio: copiar es todo el mecanismo.
+
 El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de posts.
 
 **Idioma.** La interfaz está en inglés por defecto, con un selector arriba a la derecha para pasar a español. La elección se recuerda en ese navegador, y `?lang=es` o `?lang=en` fuerza una. Los números, las fechas y los porcentajes siguen la misma elección. Tus propios títulos nunca se traducen: aparecen tal como los publicaste.
@@ -130,7 +156,8 @@ El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de
 
 ## Datos y privacidad
 
-- Todo se queda en tu máquina: los JSON en `data/`, el histórico en `data/substack.sqlite` y un `dashboard.html` autocontenido.
+- Todo se queda en tu máquina: la extensión guarda sus datos en el almacenamiento que Chrome le reserva, y la app local guarda los JSON en `data/`, el histórico en `data/substack.sqlite` y un `dashboard.html` autocontenido.
+- La extensión no tiene servidor, ni cuenta, ni analítica. Al desinstalarla se borran sus datos, así que exporta o sincroniza antes si te importa el histórico.
 - `data/`, `.profile/` y `dashboard.html` están en el `.gitignore`: contienen tus estadísticas y tu sesión.
 - **Tu sesión vale tanto como tu contraseña.** Permite publicar y borrar, no solo leer. Este proyecto solo lee. No compartas `.profile/` ni pegues tu cookie en ningún sitio.
 - Solo devuelven estadísticas las publicaciones donde eres **administrador**.
@@ -139,17 +166,23 @@ El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de
 
 - **Skill**: Claude Code y Python 3.
 - **App local**: Node 22+ (usa el `node:sqlite` incorporado). Playwright controla el Chrome que ya tienes instalado; no descarga otro navegador.
+- **Extensión**: Chrome (o cualquier navegador Chromium que admita extensiones MV3).
 
 ## Estructura
 
 ```
 substack-dashboard/     la skill portable de Claude Code (SKILL.md, recolector, generador, endpoints)
-tools/                  app local: servidor, sincronización con Playwright, capa SQLite, generador
-extension/              extensión de Chrome opcional (sincroniza con tu sesión normal)
+tools/                  la plantilla del panel y sus generadores (servidor, Playwright, capa SQLite)
+extension/              la extensión de Chrome: recolector, almacenamiento y su propio panel
 demo/                   datos ficticios para previsualizar (fuera de git)
 docs/                   capturas usadas en este README
 data/                   tus datos e histórico (fuera de git)
 ```
+
+`tools/template.html` es la única fuente del panel: `npm run templates` regenera
+desde ahí la copia de la skill y la página de la extensión. Ejecútalo después de
+tocar la plantilla — la página de la extensión no puede llevar scripts en línea,
+así que el generador la parte en `dashboard.html` + `dashboard.js`.
 
 ## Créditos
 

@@ -1,7 +1,8 @@
 # Your data and session — never commit these
 data/
 .profile/
-dashboard.html
+# solo el de la raíz: el panel de la extensión sí va al repo
+/dashboard.html
 
 # Build artifacts
 *.skill

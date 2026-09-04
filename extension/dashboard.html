@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Substack Dashboard</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10);
+    --s1: #2a78d6; --s1-wash: rgba(42,120,214,.10); --s2: #eb6834; --s3: #1baf7a;
+    --good: #006300; --bad: #d03b3b; --accent: #ff6719; --hover: rgba(11,11,11,.04);
+    --c1: #2a78d6; --c2: #eb6834; --c3: #1baf7a; --c4: #eda100; --c5: #e87ba4; --c6: #008300; --c7: #4a3aa7; --c8: #e34948;
+    /* Rampa secuencial de un solo tono para el mapa: cuanto más oscuro, más suscriptores. */
+    --map-0: #e8e7e1; --map-1: #cde2fb; --map-2: #9ec5f4; --map-3: #5598e7; --map-4: #2a78d6; --map-5: #184f95;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+      --s1: #3987e5; --s1-wash: rgba(57,135,229,.12); --s2: #d95926; --s3: #199e70;
+      --good: #0ca30c; --bad: #e66767; --hover: rgba(255,255,255,.05);
+      --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500; --c5: #d55181; --c6: #008300; --c7: #9085e9; --c8: #e66767;
+      --map-0: #2c2c2a; --map-1: #123a63; --map-2: #17538f; --map-3: #1d6bb8; --map-4: #2a86df; --map-5: #6badf0;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 20px 60px; }
+  header { margin-bottom: 16px; }
+  header h1 { font-size: 20px; margin: 0; letter-spacing: -.01em; white-space: nowrap; }
+  header h1 small { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 8px; }
+  .hrow { display: flex; align-items: center; gap: 12px; }
+  .hrow1 { justify-content: space-between; margin-bottom: 12px; }
+  .hnav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .navbtn.plain { font-weight: 500; }
+  .navbtn[aria-current="true"], .navbtn.plain[aria-current="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+  .iconbtn { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+  .iconbtn:hover { background: var(--hover); color: var(--ink); }
+  .iconbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  /* Paleta de búsqueda: se superpone para que los resultados se vean sin depender del scroll. */
+  .emptybox { display: none; text-align: center; padding: 64px 20px; }
+  body.empty-state .emptybox { display: block; }
+  body.empty-state .filters, body.empty-state #compare, body.empty-state #pubview, body.empty-state #notesview, body.empty-state .credwrap { display: none; }
+  .emptybox h2 { font-size: 18px; margin: 0 0 8px; }
+  .emptybox p { margin: 0; color: var(--muted); font-size: 14px; }
+  .synclog { font-size: 12px; color: var(--muted); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .palette { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.45); display: flex; align-items: flex-start; justify-content: center; padding: 12vh 16px 16px; }
+  .palette[hidden] { display: none; }
+  .palbox { width: 100%; max-width: 620px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.3); overflow: hidden; }
+  .palbox input { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid var(--grid); background: transparent; color: var(--ink); font: inherit; font-size: 16px; padding: 15px 18px; outline: none; }
+  .palresults { max-height: 52vh; overflow: auto; }
+  .palresults button { display: block; width: 100%; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; padding: 10px 18px; cursor: pointer; }
+  .palresults button:hover, .palresults button.sel { background: var(--hover); }
+  .palresults .pt { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .palresults .pm { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .palempty { padding: 18px; color: var(--muted); font-size: 13px; }
+  .palbox.help { padding: 20px 22px 22px; }
+  .palbox.help h3 { margin: 0 0 12px; font-size: 15px; }
+  .palbox.help ol { margin: 0 0 16px; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+  .palbox.help code { background: var(--page); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  .navsel { position: relative; }
+  .navbtn { display: inline-flex; align-items: center; gap: 8px; max-width: 340px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  .navbtn .nl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .navmore { flex: none; background: var(--ink); color: var(--page); border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+  .navmenu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 260px; max-height: 62vh; overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.18); padding: 6px; }
+  .navmenu button { display: flex; align-items: center; gap: 9px; width: 100%; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+  .navmenu button:hover { background: var(--hover); }
+  .navmenu button[aria-current="true"] { font-weight: 600; }
+  .navmenu .grp { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 9px 10px 4px; }
+  .navmenu hr { border: 0; border-top: 1px solid var(--grid); margin: 6px 4px; }
+  select.ctl { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 6px 10px; font: inherit; max-width: 280px; cursor: pointer; }
+  select.ctl:focus-visible { outline: 2px solid var(--s1); outline-offset: 1px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; }
+  .filters .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .filters .seg button { border: 0; background: transparent; color: var(--ink-2); padding: 6px 10px; font: inherit; cursor: pointer; }
+  .filters .seg button[aria-pressed="true"] { background: var(--hover); color: var(--ink); font-weight: 600; }
+  .filters input[type=search] { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 6px 10px; font: inherit; min-width: 220px; }
+  .filters .spacer { flex: 1; }
+  .filters .meta { color: var(--muted); font-size: 12px; }
+  .grid { display: grid; gap: 12px; }
+  .tiles { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+  .tile .label { color: var(--ink-2); font-size: 12px; }
+  .tile .value { font-size: 26px; font-weight: 600; margin-top: 2px; letter-spacing: -.01em; }
+  .tile.hero .value { font-size: 48px; line-height: 1.05; }
+  .tile .delta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .delta.up { color: var(--good); } .delta.down { color: var(--bad); }
+  .charts { grid-template-columns: 2fr 1fr; margin-bottom: 12px; }
+  .charts .wide { grid-column: 1 / -1; }
+  @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+  .card h2 { font-size: 14px; margin: 0 0 2px; font-weight: 600; }
+  .card.collapsible .head { cursor: pointer; user-select: none; }
+  .headactions { display: flex; align-items: center; gap: 6px; flex: none; }
+  .chev { flex: none; width: 22px; height: 22px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+  .chev::before { content: ''; position: absolute; inset: 0; margin: auto; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s ease; }
+  .card.collapsed .chev::before { transform: rotate(-45deg) translate(-1px, 1px); }
+  .card.collapsed .cardbody { display: none; }
+  .card.collapsed { padding-bottom: 12px; }
+  .card.collapsed .head { margin-bottom: 0; }
+  .card .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+  .card .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .card .head button:not(.seg button) { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; }
+  svg { display: block; width: 100%; overflow: visible; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-line { stroke: var(--axis); stroke-width: 1; }
+  .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .line { fill: none; stroke: var(--s1); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .area { fill: var(--s1-wash); }
+  .bar { fill: var(--s1); } .bar.dim { fill: var(--s1); opacity: .35; } .bar.hi { fill: var(--s2); }
+  .hit { fill: transparent; cursor: pointer; }
+  .dot { fill: var(--s1); stroke: var(--surface); stroke-width: 2; }
+  .crosshair { stroke: var(--axis); stroke-width: 1; }
+  .dlabel { fill: var(--ink-2); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .tooltip { position: fixed; pointer-events: none; z-index: 10; background: var(--ink); color: var(--page); padding: 6px 9px; border-radius: 6px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.2); max-width: 300px; }
+  .tooltip b { display: block; margin-bottom: 2px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-2); font-size: 12px; margin-top: 6px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 8px 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child, th.t, td.t { text-align: left; }
+  th { color: var(--ink-2); font-weight: 500; font-size: 12px; cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--surface); }
+  th[aria-sort="descending"]::after { content: " ↓"; } th[aria-sort="ascending"]::after { content: " ↑"; }
+  tbody tr { cursor: pointer; } tbody tr:hover { background: var(--hover); }
+  td.t { white-space: normal; min-width: 260px; }
+  td.t .title { font-weight: 500; } td.t .date { color: var(--muted); font-size: 12px; }
+  .badge { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--hover); color: var(--ink-2); margin-left: 6px; }
+  .vs { font-size: 12px; } .vs.up { color: var(--good); } .vs.down { color: var(--bad); }
+  .tablewrap { overflow-x: auto; }
+  tbody tr.detailrow { cursor: default; background: var(--page); }
+  tbody tr.detailrow:hover { background: var(--page); }
+  .detailrow > td { padding: 0; text-align: left; white-space: normal; border-bottom: 1px solid var(--grid); }
+  .detailbox { padding: 20px 22px 24px; }
+  .detailrow .dstat { background: var(--surface); }
+  tbody tr.selected { background: var(--hover); }
+  tbody tr.selected td:first-child { box-shadow: inset 3px 0 0 var(--s1); }
+  .dhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+  .dhead h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; }
+  .dhead h3 a { text-decoration: none; } .dhead h3 a:hover { text-decoration: underline; }
+  .dhead .sub { color: var(--muted); font-size: 12px; }
+  .dhead .btn { flex: none; padding: 5px 12px; font-size: 12px; }
+  .dstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .dstat { background: var(--page); border-radius: 10px; padding: 11px 13px; }
+  .dstat .l { font-size: 11px; color: var(--ink-2); }
+  .dstat .v { font-size: 21px; font-weight: 600; letter-spacing: -.01em; margin-top: 3px; }
+  .dstat .n { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+  .dcaption { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 18px 0 9px; }
+  .dsep { border: 0; border-top: 1px solid var(--grid); margin: 22px 0 18px; }
+  .dcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 30px; }
+  .dcols h4 { margin: 0 0 12px; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .srcrow { margin-bottom: 11px; }
+  .srcrow .t { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 5px; }
+  .srcrow .t span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .srcbar { height: 5px; border-radius: 3px; background: var(--grid); }
+  .srcbar i { display: block; height: 100%; border-radius: 3px; background: var(--s1); }
+  .linkrow { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--grid); font-size: 13px; }
+  .linkrow span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .linkrow span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dempty { color: var(--muted); font-size: 13px; }
+  .empty { color: var(--muted); font-size: 13px; padding: 12px 0; }
+  .sr { position: absolute; left: -9999px; }
+  .geowrap { display: grid; grid-template-columns: 1.9fr 1fr; gap: 26px; align-items: start; }
+  @media (max-width: 900px) { .geowrap { grid-template-columns: 1fr; gap: 18px; } }
+  .geowrap svg { display: block; width: 100%; height: auto; }
+  .cpath { fill: var(--map-0); stroke: var(--surface); stroke-width: .6; }
+  .cpath.has { cursor: default; }
+  .cpath:hover { stroke: var(--ink); stroke-width: 1; }
+  .maplegend { display: flex; align-items: center; gap: 7px; margin-top: 10px; font-size: 11px; color: var(--muted); }
+  .maplegend i { display: block; width: 26px; height: 9px; border-radius: 2px; }
+  .credit { margin: 28px 0 10px; text-align: center; font-size: 11px; color: var(--muted); }
+  .bmc { display: inline-flex; align-items: center; gap: 7px; margin: 0 auto 30px; padding: 8px 16px; border-radius: 8px; background: #ffdd00; color: #000; font-size: 13px; font-weight: 600; text-decoration: none; }
+  .bmc:hover { filter: brightness(.97); }
+  .palbox.analyze { padding: 18px 20px 20px; max-height: 74vh; overflow: auto; }
+  .palbox.analyze h3 { margin: 0 0 3px; font-size: 15px; }
+  .asksub { margin: 0 0 14px; font-size: 12px; color: var(--muted); }
+  .asks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .ask { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .ask .txt { font-size: 13px; }
+  .ask .txt small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .ask button { flex: none; border: 1px solid var(--border); background: var(--surface); color: var(--ink); padding: 5px 11px; border-radius: 8px; font: inherit; font-size: 12px; cursor: pointer; }
+  .ask button:hover { background: var(--hover); }
+  .ask button.done { border-color: var(--good); color: var(--good); }
+  #asktext { width: 100%; box-sizing: border-box; margin: 0 0 10px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: var(--page); border: 1px solid var(--border); border-radius: 8px; padding: 8px; resize: vertical; }
+  .askfoot { margin-top: 10px; font-size: 12px; color: var(--muted); }
+  .credwrap { text-align: center; }
+  .credit a { color: inherit; }
+  .credit a.author { text-decoration: underline; }
+  .relnote { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--s1); border-radius: 8px; padding: 9px 13px; margin: 0 0 12px; font-size: 12px; color: var(--ink-2); }
+  .syncbar { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  /* Una regla de clase con display gana a [hidden], que solo aporta display: none. */
+  .syncbar[hidden], .filters .seg[hidden] { display: none; }
+  .btn { border: 1px solid var(--border); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 8px; font: inherit; cursor: pointer; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .btn[disabled] { opacity: .6; cursor: default; }
+  .cmp-charts { grid-template-columns: repeat(3, 1fr); margin-bottom: 12px; }
+  @media (max-width: 900px) { .cmp-charts { grid-template-columns: 1fr; } }
+  .pubdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .cmp-table td.t { min-width: 180px; }
+  .cmp-table tbody tr { cursor: pointer; }
+  .top-list { list-style: none; margin: 0; padding: 0; }
+  .top-list li { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--grid); }
+  .top-list .rank { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .top-list .pt { font-weight: 500; } .top-list .pm { color: var(--muted); font-size: 12px; }
+  .top-list .pv { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .top-list .pv small { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hrow hrow1">
+      <h1><span data-i18n="title"></span> <small id="who"></small></h1>
+      <div class="hnav">
+        <div class="navsel">
+          <button class="navbtn" id="navbtn" aria-haspopup="menu" aria-expanded="false">
+            <i class="pubdot" id="navdot"></i><span class="nl" id="navlabel"></span><span class="navmore" id="navmore" hidden></span>
+          </button>
+          <div class="navmenu" id="navmenu" role="menu" hidden></div>
+        </div>
+        <button class="navbtn plain" id="notesbtn" hidden></button>
+        <button class="iconbtn" id="searchbtn" data-i18n-aria="searchPosts" title="">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 L18 18"/></svg>
+        </button>
+        <button class="iconbtn" id="analyzebtn" data-i18n-aria="claudeTitle" title="">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.2 11.9 8.1 17.8 10 11.9 11.9 10 17.8 8.1 11.9 2.2 10 8.1 8.1Z"/></svg>
+        </button>
+        <div class="navsel">
+          <button class="iconbtn" id="langbtn" aria-haspopup="menu" aria-expanded="false" data-i18n-aria="langLabel" title="">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2"/><ellipse cx="10" cy="10" rx="3" ry="7.2"/><path d="M3 7.6h14M3 12.4h14"/></svg>
+          </button>
+          <div class="navmenu" id="langmenu" role="menu" hidden>
+            <button role="menuitem" data-lang="en">English</button>
+            <button role="menuitem" data-lang="es">Español</button>
+          </div>
+        </div>
+        <div class="syncbar" id="syncbar" hidden>
+          <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
+          <span class="synclog" id="synclog"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="emptybox" id="emptybox">
+    <h2 data-i18n="emptyTitle"></h2>
+    <p data-i18n="emptyBody"></p>
+  </div>
+  <div class="palette" id="palette" hidden>
+    <div class="palbox">
+      <input type="search" id="palinput" data-i18n-ph="searchPosts" autocomplete="off">
+      <div class="palresults" id="palresults"></div>
+    </div>
+  </div>
+  <div class="palette" id="analyzebox" hidden>
+    <div class="palbox analyze">
+      <h3 data-i18n="claudeTitle"></h3>
+      <p class="asksub" data-i18n="claudeSub"></p>
+      <ul class="asks" id="asks"></ul>
+      <div class="askfoot"><span data-i18n="claudeFoot"></span> <a href="https://claude.ai/new" target="_blank" rel="noopener">claude.ai&nbsp;↗</a></div>
+    </div>
+  </div>
+  <div class="palette" id="askbox" hidden>
+    <div class="palbox help">
+      <h3 data-i18n="claudeManual"></h3>
+      <textarea id="asktext" readonly rows="10"></textarea>
+      <button class="btn" id="askclose" data-i18n="close"></button>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="seg" id="range" role="group" data-i18n-aria="rangeLabel">
+      <button data-days="0" aria-pressed="true" data-i18n="all"></button>
+      <button data-days="365" data-i18n="d365"></button>
+      <button data-days="90" data-i18n="d90"></button>
+      <button data-days="30" data-i18n="d30"></button>
+    </div>
+    <div class="seg" id="mode" role="group" data-i18n-aria="modeLabel">
+      <button data-mode="abs" aria-pressed="true" data-i18n="absolute"></button>
+      <button data-mode="rel" aria-pressed="false" data-i18n="relative"></button>
+    </div>
+    <div class="spacer"></div>
+    <div class="meta" id="meta"></div>
+  </div>
+  <div class="relnote" id="relnote" data-i18n="relNote" hidden></div>
+
+  <div id="compare" hidden>
+    <div class="grid tiles" id="cmp-tiles"></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="head"><div><h2 data-i18n="publications"></h2><div class="sub" id="cmp-sub"></div></div></div>
+      <div class="legend" id="cmp-legend"></div>
+      <div class="tablewrap"><table id="cmp-table" class="cmp-table"><thead></thead><tbody></tbody></table></div>
+    </div>
+    <div class="grid cmp-charts">
+      <div class="card collapsible" data-panel="cmpSubs"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" data-i18n="subsPerPub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="cmp-subs"></div></div></div>
+      <div class="card collapsible" data-panel="cmpViews"><div class="head"><div><h2 id="cmp-views-h"></h2><div class="sub" id="cmp-views-sub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="cmp-views"></div></div></div>
+      <div class="card collapsible" data-panel="cmpOpen"><div class="head"><div><h2 data-i18n="openRate"></h2><div class="sub" data-i18n="openRateSub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="cmp-open"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="head"><div><h2 data-i18n="bestPosts"></h2><div class="sub" id="cmp-top-sub"></div></div>
+        <div class="seg" id="cmp-top-metric"><button data-m="views" aria-pressed="true" data-i18n="mViews"></button><button data-m="open_rate" data-i18n="mOpen"></button><button data-m="reactions" data-i18n="mReactions"></button><button data-m="signups" data-i18n="mSignups"></button></div></div>
+      <ol class="top-list" id="cmp-top"></ol>
+    </div>
+  </div>
+
+  <div id="pubview">
+  <div class="grid tiles" id="tiles"></div>
+
+  <div class="grid charts">
+    <div class="card collapsible" data-panel="subs"><div class="head"><div><h2 data-i18n="subscribers"></h2><div class="sub" id="subs-sub"></div></div><div class="headactions"><button id="subs-table-btn"></button><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="subs-chart"></div><div id="subs-table" hidden></div></div></div>
+    <div class="card collapsible" data-panel="sources"><div class="head"><div><h2 data-i18n="growthSources"></h2><div class="sub" data-i18n="growthSourcesSub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="sources-chart"></div></div></div>
+    <div class="card wide collapsible" data-panel="views"><div class="head"><div><h2 data-i18n="viewsPerPost"></h2><div class="sub" id="views-sub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div id="views-chart"></div><div class="legend" id="views-legend"></div></div></div>
+    <div class="card wide collapsible" data-panel="geo"><div class="head"><div><h2 data-i18n="subsByCountry"></h2><div class="sub" id="geo-sub"></div></div><div class="headactions"><button class="chev" aria-expanded="true"></button></div></div><div class="cardbody"><div class="geowrap"><div id="geo-map"></div><div id="geo-list"></div></div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="head"><div><h2 data-i18n="posts"></h2><div class="sub" id="posts-sub"></div></div></div>
+    <div class="tablewrap"><table id="posts"><thead></thead><tbody></tbody></table></div>
+  </div>
+  </div><!-- /pubview -->
+
+  <div id="notesview" hidden>
+    <div class="grid tiles" id="notes-tiles"></div>
+    <div class="relnote" data-i18n="notesNoViews"></div>
+    <div class="card">
+      <div class="head"><div><h2 data-i18n="notes"></h2><div class="sub" id="notes-sub"></div></div></div>
+      <div class="tablewrap"><table id="notes-table"><thead></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+  <div class="credwrap">
+    <footer class="credit"><span data-i18n="creditPre"></span> <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a><span data-i18n="creditMid"></span><a class="author" href="https://www.concriterio.blog" target="_blank" rel="noopener">Pol Marzà</a><span data-i18n="creditPost"></span></footer>
+    <a class="bmc" href="https://buymeacoffee.com/polmarza" target="_blank" rel="noopener">☕ <span data-i18n="buyCoffee"></span></a>
+  </div>
+</div>
+<div class="tooltip" id="tip" hidden></div>
+<script src="shape.js"></script>
+<script src="dashboard-boot.js"></script>
+<script src="dashboard.js"></script>
+
+</body>
+</html>

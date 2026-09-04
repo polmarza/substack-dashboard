@@ -8,7 +8,9 @@
 // En su lugar abre una pestaña en segundo plano de cada publicación e inyecta el
 // recolector con chrome.scripting. Ahí las peticiones son same-origin desde una
 // página real con toda la sesión, exactamente como el recolector de la skill.
-const SERVER = 'http://127.0.0.1:8787';
+//
+// Lo recogido se guarda en chrome.storage.local y lo lee el panel de la propia
+// extensión (dashboard.html). No hace falta ningún servidor ni sale de este Chrome.
 let state = { running: false, lines: [], error: false };
 const say = (line, error = false) => {
   state.lines.push(line);
@@ -136,15 +138,58 @@ async function pageProfile() {
   }
 }
 
+// ---- Histórico ----
+// Cada sincronización es una foto. Guardamos las diferencias que el panel sabe
+// dibujar (serie de suscriptores y evolución por post) sin arrastrar los datasets
+// enteros, que ocuparían de más muy rápido.
+const MAX_SYNCS = 400;      // ~un año sincronizando a diario
+const MAX_POINTS = 120;     // puntos guardados por post
+
+async function mergeHistory(pubId, ds) {
+  const key = 'hist:' + pubId;
+  const prev = (await chrome.storage.local.get(key))[key] || { subscribers: [], syncs: [], posts: {} };
+
+  // La serie que devuelve Substack son siempre 30 días; acumulándola día a día
+  // sale un histórico más largo del que la propia API ofrece.
+  const days = new Map(prev.subscribers);
+  const series = Array.isArray(ds.subscribers_timeseries) ? ds.subscribers_timeseries
+    : Array.isArray(ds.emails_timeseries) ? ds.emails_timeseries : [];
+  for (const [day, n] of series) days.set(String(day).replace(/\//g, '-'), n);
+  const subscribers = [...days.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
+
+  const at = ds.fetched_at;
+  const syncs = prev.syncs.filter((s) => s.fetched_at !== at);
+  const v = (ds.summary_v2 && ds.summary_v2[30]) || {};
+  syncs.push({ id: syncs.length + 1, fetched_at: at,
+    subscribers: ds.summary?.totalEmail ?? v.totalSubscribersEnd ?? null,
+    views_30d: ds.summary?.views ?? null, open_rate: ds.summary?.openRate ?? null });
+
+  const posts = prev.posts || {};
+  for (const p of ds.posts || []) {
+    const s = p.stats || {};
+    const row = [at, s.views ?? 0, s.opened ?? 0, p.reaction_count ?? 0, p.comment_count ?? 0, s.signups ?? 0];
+    const list = (posts[p.id] || []).filter((r) => r[0] !== at);
+    list.push(row);
+    posts[p.id] = list.slice(-MAX_POINTS);
+  }
+  const hist = { subscribers, syncs: syncs.slice(-MAX_SYNCS), posts };
+  await chrome.storage.local.set({ [key]: hist });
+}
+
+// Si borras una publicación en Substack, sus datos también se van de aquí.
+async function prune(keep) {
+  const all = await chrome.storage.local.get(null);
+  const alive = new Set(keep.map((p) => 'ds:' + p.subdomain).concat(keep.map((p) => 'hist:' + p.id)));
+  const dead = Object.keys(all).filter((k) => (k.startsWith('ds:') || k.startsWith('hist:')) && !alive.has(k));
+  if (dead.length) await chrome.storage.local.remove(dead);
+  return dead;
+}
+
 async function sync() {
   if (state.running) return;
   state = { running: true, lines: [], error: false };
-  await say('Checking the dashboard server…');
+  await say('Reading your Substack profile…');
   try {
-    const ping = await fetch(`${SERVER}/api/status`).then((r) => r.json()).catch(() => null);
-    if (!ping) throw new Error('Cannot reach the dashboard server at 127.0.0.1:8787. Run "npm start" first.');
-
-    await say('Reading your Substack profile…');
     const prof = await runInTab('https://substack.com/home', pageProfile);
     if (!prof.pubs || !prof.pubs.length) throw new Error('No admin publications found. Sign in at substack.com and try again.');
     await say(`Signed in as @${prof.handle}. ${prof.pubs.length} publications: ${prof.pubs.map((p) => p.subdomain).join(', ')}`);
@@ -153,33 +198,32 @@ async function sync() {
       await say(`→ ${pub.subdomain}…`);
       const ds = await runInTab(`https://${pub.subdomain}.substack.com/publish/home`, pageCollect);
       ds.publication_meta = pub;
-      const r = await fetch(`${SERVER}/api/import?subdomain=${encodeURIComponent(pub.subdomain)}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ds),
-      });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(`Server rejected ${pub.subdomain}: ${j.error || r.status}`);
+      await chrome.storage.local.set({ ['ds:' + pub.subdomain]: ds });
+      await mergeHistory(pub.id, ds);
       await say(`   ${pub.subdomain}: ${ds.posts.length} posts, ${ds.summary?.totalEmail ?? '?'} subscribers`);
     }
 
-    // Si borraste una publicación en Substack, aquí también desaparece.
-    const pruned = await fetch(`${SERVER}/api/prune`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ keep: prof.pubs.map((p) => p.subdomain) }),
-    }).then((r) => r.json()).catch(() => ({}));
-    if (pruned.removed && pruned.removed.length) await say(`   removed: ${pruned.removed.join(', ')}`);
+    const removed = await prune(prof.pubs);
+    if (removed.length) await say(`   removed: ${removed.length} publication(s) no longer in your account`);
 
     await say('→ notes…');
+    let notes = null;
     try {
-      const notes = await runInTab('https://substack.com/home', pageCollectNotes);
-      await fetch(`${SERVER}/api/import?subdomain=notes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(notes) });
+      notes = await runInTab('https://substack.com/home', pageCollectNotes);
+      await chrome.storage.local.set({ notes });
       await say(`   ${notes.notes.length} notes`);
     } catch (e) {
       await say('   notes: ' + e.message, false);
     }
 
-    await say('Building the dashboard…');
-    const b = await fetch(`${SERVER}/api/build`, { method: 'POST' });
-    if (!b.ok) throw new Error(`build returned ${b.status}`);
+    // Si las notas fallaron, conservamos lo que ya sabíamos en lugar de borrarlo.
+    const old = (await chrome.storage.local.get('index')).index || {};
+    await chrome.storage.local.set({ index: {
+      updated_at: new Date().toISOString(),
+      user: (notes && notes.user) || old.user || { handle: prof.handle },
+      primary_publication_id: (notes && notes.primary_publication_id) || old.primary_publication_id || null,
+      publications: prof.pubs,
+    } });
     await say('Done. The dashboard will reload on its own.');
   } catch (e) {
     await say('Error: ' + (e && e.message || e), true);

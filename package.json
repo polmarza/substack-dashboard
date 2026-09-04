@@ -13,7 +13,9 @@
     "install-service": "node tools/install-service.mjs",
     "uninstall-service": "node tools/install-service.mjs --uninstall",
     "demo": "python3 tools/make_demo.py demo",
-    "skill-template": "python3 tools/make_skill_template.py"
+    "skill-template": "python3 tools/make_skill_template.py",
+    "ext-template": "python3 tools/make_extension_dashboard.py",
+    "templates": "npm run skill-template && npm run ext-template"
   },
   "license": "MIT",
   "type": "module",

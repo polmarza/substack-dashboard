@@ -14,6 +14,8 @@ import os
 import re
 import sys
 
+from htmlcheck import assert_balanced
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "template.html")
 DST = os.path.join(HERE, "..", "substack-dashboard", "assets", "template.html")
@@ -28,7 +30,7 @@ def cut_between(h, start_marker, end_marker, keep_end=True):
 def derive(h):
     # 1. Fuera el bloque que consulta al servidor local (botón Sincronizar).
     h = cut_between(h, "  // ---------- sincronización ----------",
-                    "  addEventListener('resize',")
+                    "  if (!HAS_DATA) return;")
 
     # 2. La serie de suscriptores sale solo del dataset: sin base de datos no hay histórico.
     i = h.index("    // El histórico de la base de datos crece")
@@ -47,24 +49,28 @@ def derive(h):
     # 4. Fuera la barra de sincronización de la cabecera.
     bar = """        <div class="syncbar" id="syncbar" hidden>
           <button class="btn primary" id="sync-btn" data-i18n="sync"></button>
-          <button class="btn" id="install-btn" data-i18n="installExt" hidden></button>
+          <span class="synclog" id="synclog"></span>
         </div>
 """
     assert bar in h, "no encuentro la barra de sincronización"
     h = h.replace(bar, "")
-    # La capa de ayuda para instalar la extensión tampoco aplica sin servidor.
-    i = h.index('  <div class="palette" id="installhelp" hidden>')
-    j = h.index("</div>\n", h.index('id="installclose"')) + len("</div>\n")
-    j = h.index("  </div>\n", j) + len("  </div>\n")
-    h = h[:i] + h[j:]
 
-    # 5. Y sus reglas CSS, que sin la barra no las usa nadie.
+    # 5. El estado vacío tampoco aplica: en la skill los datos vienen ya incrustados.
+    i = h.index('  <div class="emptybox" id="emptybox">')
+    j = h.index("  </div>\n", i) + len("  </div>\n")
+    h = h[:i] + h[j:]
+    h = re.sub(r"^  [^\n]*(empty-state|\.emptybox)[^\n]*\n", "", h, flags=re.M)
+
+    # 6. Y sus reglas CSS, que sin la barra no las usa nadie.
     h = re.sub(r"^  \.(syncbar|syncstate|synclog)\b[^\n]*\n", "", h, flags=re.M)
     return h
 
 
 def main():
-    h = derive(open(SRC, encoding="utf-8").read())
+    src = open(SRC, encoding="utf-8").read()
+    assert_balanced(src, "tools/template.html")
+    h = derive(src)
+    assert_balanced(h, "la plantilla derivada de la skill")
     for leftover in ("syncUI", "history", "evoHtml", 'id="syncbar"', "syncstate"):
         if leftover in h:
             sys.exit(f"ERROR: queda una referencia a «{leftover}» en la plantilla derivada")

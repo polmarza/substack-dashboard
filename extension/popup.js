@@ -4,18 +4,17 @@ const render = (st) => {
   $('#sync').disabled = !!st.running;
   $('#status').className = st.error ? 'err' : '';
   $('#status').textContent = (st.lines || []).join('\n');
+  $('#status').scrollTop = $('#status').scrollHeight;
 };
 chrome.storage.session.get('syncState').then(({ syncState }) => render(syncState));
 chrome.storage.onChanged.addListener((changes, area) => { if (area === 'session' && changes.syncState) render(changes.syncState.newValue); });
 $('#sync').onclick = () => chrome.runtime.sendMessage({ type: 'sync' });
+
+// El panel es una página de la propia extensión: si ya está abierta, la trae al frente.
 $('#open').onclick = async () => {
-  try {
-    const r = await fetch('http://127.0.0.1:8787/api/status', { cache: 'no-store' });
-    if (!r.ok) throw new Error();
-    chrome.tabs.create({ url: 'http://127.0.0.1:8787/' });
-  } catch {
-    const st = $('#status');
-    st.className = 'err';
-    st.textContent = 'The dashboard server is not running. Start it in a terminal with:\n\n    npm start\n\nAn extension cannot launch it for you.';
-  }
+  const url = chrome.runtime.getURL('dashboard.html');
+  const [open] = await chrome.tabs.query({ url });
+  if (open) chrome.tabs.update(open.id, { active: true });
+  else chrome.tabs.create({ url });
+  window.close();
 };

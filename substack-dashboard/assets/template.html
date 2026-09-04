@@ -167,9 +167,23 @@
   .credit { margin: 28px 0 10px; text-align: center; font-size: 11px; color: var(--muted); }
   .bmc { display: inline-flex; align-items: center; gap: 7px; margin: 0 auto 30px; padding: 8px 16px; border-radius: 8px; background: #ffdd00; color: #000; font-size: 13px; font-weight: 600; text-decoration: none; }
   .bmc:hover { filter: brightness(.97); }
+  .palbox.analyze { padding: 18px 20px 20px; max-height: 74vh; overflow: auto; }
+  .palbox.analyze h3 { margin: 0 0 3px; font-size: 15px; }
+  .asksub { margin: 0 0 14px; font-size: 12px; color: var(--muted); }
+  .asks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .ask { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .ask .txt { font-size: 13px; }
+  .ask .txt small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .ask button { flex: none; border: 1px solid var(--border); background: var(--surface); color: var(--ink); padding: 5px 11px; border-radius: 8px; font: inherit; font-size: 12px; cursor: pointer; }
+  .ask button:hover { background: var(--hover); }
+  .ask button.done { border-color: var(--good); color: var(--good); }
+  #asktext { width: 100%; box-sizing: border-box; margin: 0 0 10px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: var(--page); border: 1px solid var(--border); border-radius: 8px; padding: 8px; resize: vertical; }
+  .askfoot { margin-top: 10px; font-size: 12px; color: var(--muted); }
   .credwrap { text-align: center; }
   .credit a { color: inherit; }
+  .credit a.author { text-decoration: underline; }
   .relnote { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--s1); border-radius: 8px; padding: 9px 13px; margin: 0 0 12px; font-size: 12px; color: var(--ink-2); }
+  /* Una regla de clase con display gana a [hidden], que solo aporta display: none. */
   .btn { border: 1px solid var(--border); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 8px; font: inherit; cursor: pointer; }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
   .btn[disabled] { opacity: .6; cursor: default; }
@@ -202,6 +216,9 @@
         <button class="iconbtn" id="searchbtn" data-i18n-aria="searchPosts" title="">
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 L18 18"/></svg>
         </button>
+        <button class="iconbtn" id="analyzebtn" data-i18n-aria="claudeTitle" title="">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.2 11.9 8.1 17.8 10 11.9 11.9 10 17.8 8.1 11.9 2.2 10 8.1 8.1Z"/></svg>
+        </button>
         <div class="navsel">
           <button class="iconbtn" id="langbtn" aria-haspopup="menu" aria-expanded="false" data-i18n-aria="langLabel" title="">
             <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2"/><ellipse cx="10" cy="10" rx="3" ry="7.2"/><path d="M3 7.6h14M3 12.4h14"/></svg>
@@ -218,6 +235,21 @@
     <div class="palbox">
       <input type="search" id="palinput" data-i18n-ph="searchPosts" autocomplete="off">
       <div class="palresults" id="palresults"></div>
+    </div>
+  </div>
+  <div class="palette" id="analyzebox" hidden>
+    <div class="palbox analyze">
+      <h3 data-i18n="claudeTitle"></h3>
+      <p class="asksub" data-i18n="claudeSub"></p>
+      <ul class="asks" id="asks"></ul>
+      <div class="askfoot"><span data-i18n="claudeFoot"></span> <a href="https://claude.ai/new" target="_blank" rel="noopener">claude.ai&nbsp;↗</a></div>
+    </div>
+  </div>
+  <div class="palette" id="askbox" hidden>
+    <div class="palbox help">
+      <h3 data-i18n="claudeManual"></h3>
+      <textarea id="asktext" readonly rows="10"></textarea>
+      <button class="btn" id="askclose" data-i18n="close"></button>
     </div>
   </div>
 
@@ -281,14 +313,14 @@
     </div>
   </div>
   <div class="credwrap">
-    <footer class="credit"><span data-i18n="creditPre"></span> <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a><span data-i18n="creditPost"></span></footer>
+    <footer class="credit"><span data-i18n="creditPre"></span> <a href="https://github.com/polmarza/substack-dashboard" target="_blank" rel="noopener">Substack Dashboard</a><span data-i18n="creditMid"></span><a class="author" href="https://www.concriterio.blog" target="_blank" rel="noopener">Pol Marzà</a><span data-i18n="creditPost"></span></footer>
     <a class="bmc" href="https://buymeacoffee.com/polmarza" target="_blank" rel="noopener">☕ <span data-i18n="buyCoffee"></span></a>
   </div>
 </div>
 <div class="tooltip" id="tip" hidden></div>
 <script id="data" type="application/json">/*__DATA__*/null</script>
 <script>
-(() => {
+(async () => {
   // Mapamundi de Natural Earth (dominio público, 1:110m), proyección equirectangular.
   // Va incrustado porque el panel debe abrirse sin conexión. Se regenera con
   // tools/make_worldmap.py; no lo edites a mano.
@@ -301,11 +333,25 @@
       title: 'Substack Dashboard', sync: 'Sincronizar',
       langLabel: 'Idioma', sectionLabel: 'Sección', pubLabel: 'Publicación',
       newsletters: 'Newsletters', allPublications: 'Todas las publicaciones',
-      installExt: 'Instalar la extensión', searchHint: 'Escribe para buscar entre tus posts',
+      claudeTitle: 'Analizar con Claude', claudeSub: 'Copia una pregunta con tus datos dentro y pégala en Claude',
+      claudeFoot: 'Copia una pregunta y pégala en', claudeCopy: 'Copiar', claudeCopied: 'Copiado ✓',
+      claudeManual: 'Copia esta pregunta a mano (⌘C) y pégala en Claude',
+      asksPub: [
+        ['Qué temas funcionan mejor', 'Analiza los títulos y las métricas de estos posts y dime qué temas, formatos y longitudes de título funcionan mejor y cuáles no. Justifica cada conclusión con los números concretos y señala cuándo la muestra es demasiado pequeña para afirmar nada.'],
+        ['Comparar el último mes con el anterior', 'Compara el rendimiento del último mes con el mes anterior a partir de estos datos: vistas, tasa de apertura, reacciones y altas. Dime qué ha cambiado de verdad y qué es ruido, teniendo en cuenta que el número de suscriptores también cambia.'],
+        ['Ideas para los próximos posts', 'A partir de lo que mejor ha funcionado en estos datos, propón 10 ideas concretas de próximos posts, cada una con un titular y una frase de por qué encaja con lo que ya funciona.'],
+        ['Diagnosticar la tasa de apertura', 'Analiza mi tasa de apertura post a post: qué titulares abren mejor, si hay patrones por día o por tipo de post, y qué tres cosas cambiarías primero.'],
+      ],
+      asksCmp: [
+        ['Cuál crece mejor y por qué', 'Compara estas publicaciones: cuál crece mejor en términos relativos (no solo en cifras absolutas) y qué explica la diferencia según los datos.'],
+        ['Dónde concentrar el esfuerzo', 'Si solo pudiera dedicar tiempo a una o dos de estas publicaciones, ¿a cuáles y por qué? Razónalo con los datos y di qué estaría renunciando.'],
+      ],
+      asksNotes: [
+        ['Qué notas funcionan mejor', 'Analiza estas notas: qué formatos, temas y longitudes consiguen más reacciones y restacks, y qué patrones ves en las que no funcionan.'],
+        ['Ideas de notas nuevas', 'A partir de las notas que mejor han funcionado, propón 10 ideas de notas nuevas, escritas ya en un tono parecido al mío.'],
+      ],
+      emptyTitle: 'Aún no hay datos', emptyBody: 'Pulsa Sincronizar para traer tus publicaciones de Substack.',
       noResults: 'Sin resultados', inPub: (p) => `en ${p}`,
-      installSteps: ['Abre <code>chrome://extensions</code> y activa el modo de desarrollador.',
-                     'Pulsa «Cargar descomprimida» y elige la carpeta <code>extension/</code> del proyecto.',
-                     'Vuelve aquí y recarga la página: el botón Sincronizar aparecerá solo.'],
       compareAll: 'Comparar todas', menuPublications: 'Publicaciones', menuOther: 'Otras vistas',
       morePubs: (n) => `+${n}`,
       metaLine: (n, when) => `${n} publicaciones · última sincronización ${when}`,
@@ -314,7 +360,7 @@
       modeLabel: 'Tipo de métrica', absolute: 'Absolutas', relative: 'Relativas',
       searchPosts: 'Buscar post…',
       relNote: 'Un post antiguo se publicó a una lista más pequeña, así que las cifras absolutas premian a los recientes solo porque la audiencia ha crecido. En modo relativo el alcance se divide entre los suscriptores que recibieron ese envío y la interacción entre las vistas del propio post, de modo que todos se comparan en igualdad. Las clasificaciones dejan fuera los casos con menos de 30 de audiencia o de vistas, porque con un denominador tan pequeño la proporción se dispara.',
-      creditPre: 'Generado con', creditPost: ', de Pol Marzà · MIT', buyCoffee: 'Invítame a un café',
+      creditPre: 'Generado con', creditMid: ', de ', creditPost: ' · MIT', buyCoffee: 'Invítame a un café',
       publications: 'Publicaciones', subscribers: 'Suscriptores', subsPerPub: 'Total actual por publicación',
       viewsPerPost: 'Vistas por post', viewsPer100: 'Vistas por 100 suscriptores',
       openRate: 'Tasa de apertura', openRateSub: 'Media de los posts enviados por email',
@@ -401,11 +447,25 @@
       title: 'Substack Dashboard', sync: 'Sync',
       langLabel: 'Language', sectionLabel: 'Section', pubLabel: 'Publication',
       newsletters: 'Newsletters', allPublications: 'All publications',
-      installExt: 'Install the extension', searchHint: 'Type to search your posts',
+      claudeTitle: 'Analyze with Claude', claudeSub: 'Copy a question with your data inside and paste it into Claude',
+      claudeFoot: 'Copy a question and paste it into', claudeCopy: 'Copy', claudeCopied: 'Copied ✓',
+      claudeManual: 'Copy this question by hand (⌘C) and paste it into Claude',
+      asksPub: [
+        ['Which topics work best', 'Analyze the titles and metrics of these posts and tell me which topics, formats and title lengths work best and which do not. Back every conclusion with the actual numbers, and say when the sample is too small to claim anything.'],
+        ['Compare the last two months', 'Compare last month against the month before using this data: views, open rate, reactions and signups. Tell me what really changed and what is noise, bearing in mind the subscriber count changed too.'],
+        ['Ideas for the next posts', 'Based on what worked best in this data, suggest 10 concrete ideas for upcoming posts, each with a headline and one line on why it fits what already works.'],
+        ['Diagnose my open rate', 'Analyze my open rate post by post: which headlines open better, whether there are patterns by day or post type, and the three things you would change first.'],
+      ],
+      asksCmp: [
+        ['Which one grows best and why', 'Compare these publications: which one grows best in relative terms (not just absolute numbers) and what explains the difference according to the data.'],
+        ['Where to focus', 'If I could only spend time on one or two of these publications, which ones and why? Reason it from the data and say what I would be giving up.'],
+      ],
+      asksNotes: [
+        ['Which notes work best', 'Analyze these notes: which formats, topics and lengths get more reactions and restacks, and what patterns you see in the ones that fall flat.'],
+        ['Ideas for new notes', 'Based on the notes that worked best, suggest 10 ideas for new notes, already written in a tone close to mine.'],
+      ],
+      emptyTitle: 'Nothing here yet', emptyBody: 'Hit Sync to pull your Substack publications.',
       noResults: 'No results', inPub: (p) => `in ${p}`,
-      installSteps: ['Open <code>chrome://extensions</code> and turn on developer mode.',
-                     'Click "Load unpacked" and pick the project\'s <code>extension/</code> folder.',
-                     'Come back here and reload: the Sync button appears on its own.'],
       compareAll: 'Compare all', menuPublications: 'Publications', menuOther: 'Other views',
       morePubs: (n) => `+${n}`,
       metaLine: (n, when) => `${n} publications · last sync ${when}`,
@@ -414,7 +474,7 @@
       modeLabel: 'Metric type', absolute: 'Absolute', relative: 'Relative',
       searchPosts: 'Search posts…',
       relNote: 'An older post went out to a smaller list, so raw counts flatter recent ones simply because the audience grew. In relative mode reach is divided by the subscribers who received that send, and engagement by the post’s own views, so every post is compared on equal terms. Rankings leave out anything below 30 in audience or views, because a denominator that small sends the ratio through the roof.',
-      creditPre: 'Generated with', creditPost: ' by Pol Marzà · MIT', buyCoffee: 'Buy me a coffee',
+      creditPre: 'Generated with', creditMid: ' by ', creditPost: ' · MIT', buyCoffee: 'Buy me a coffee',
       publications: 'Publications', subscribers: 'Subscribers', subsPerPub: 'Current total per publication',
       viewsPerPost: 'Views per post', viewsPer100: 'Views per 100 subscribers',
       openRate: 'Open rate', openRateSub: 'Average across posts sent by email',
@@ -499,7 +559,15 @@
     },
   };
 
-  const DATA = JSON.parse(document.getElementById('data').textContent);
+  const DATA = await (async () => {
+    const el = document.getElementById('data');
+    const inline = el ? el.textContent.trim() : '';
+    if (inline && inline !== 'null') return JSON.parse(inline);
+    // Página de la extensión: los datos los sirve dashboard-boot.js desde chrome.storage.
+    if (typeof window.__SD_LOAD === 'function') return await window.__SD_LOAD();
+    return null;
+  })();
+
   const $ = (s, el = document) => el.querySelector(s);
   // El panel se adapta a quien lo abre: español si el navegador lo está, inglés en cualquier
   // otro caso. ?lang=es o ?lang=en fuerza uno concreto (así se capturan las imágenes del README).
@@ -559,6 +627,10 @@
   document.querySelectorAll('[data-i18n-ph]').forEach(n => { const s = T[n.dataset.i18nPh]; n.placeholder = s; n.setAttribute('aria-label', s); });
   document.querySelectorAll('[data-i18n-aria]').forEach(n => n.setAttribute('aria-label', T[n.dataset.i18nAria]));
 
+  const HAS_DATA = !!(DATA && (DATA.publications || []).length);
+
+  if (!HAS_DATA) return;   // sin datos no hay nada que pintar; la barra de arriba sí funciona
+
   // ---------- paleta de búsqueda ----------
   // Buscar en la tabla dejaba los resultados fuera de pantalla con los paneles abiertos.
   // Una capa superpuesta enseña lo que encuentras sin depender del scroll, y busca en
@@ -609,7 +681,7 @@
     palresults.querySelector('button.sel')?.scrollIntoView({ block: 'nearest' });
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { palClose(); const ih = $('#installhelp'); if (ih) ih.hidden = true; closeAllMenus(); return; }
+    if (e.key === 'Escape') { palClose(); $('#askbox').hidden = $('#analyzebox').hidden = true; closeAllMenus(); return; }
     if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && !/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) {
       e.preventDefault(); palOpen();
     }
@@ -698,6 +770,79 @@
   navmenu.addEventListener('click', e => { const b = e.target.closest('button[data-idx]'); if (!b) return; closeMenu(); selectView(+b.dataset.idx); });
   document.addEventListener('click', e => { if (!e.target.closest('.navsel')) closeAllMenus(); });
 
+  // ---------- analizar con Claude ----------
+  // El panel enseña qué pasó; la lectura de por qué la hace mejor un modelo con los datos
+  // delante. En vez de mandar nada a ningún sitio, prepara la pregunta con los números ya
+  // dentro para pegarla en Claude: los datos no salen de aquí si el usuario no los pega.
+  const MAX_ROWS = 60;                       // suficiente para razonar sin inflar el pegado
+  const mdTable = (head, rows) => [`| ${head.join(' | ')} |`, `|${head.map(() => '---').join('|')}|`,
+    ...rows.map(r => `| ${r.join(' | ')} |`)].join('\n');
+  const clean = (s) => String(s || '').replace(/\s+/g, ' ').replace(/\|/g, '/').trim();
+  const pct1 = (v) => v == null ? '—' : (v * 100).toFixed(1) + '%';
+
+  function askData() {
+    if (state.pub === -2) {
+      const notes = (DATA.notes || []).slice(0, MAX_ROWS);
+      return `Notes: ${(DATA.notes || []).length}\n\n` + mdTable(
+        ['Date', 'Note', 'Reactions', 'Restacks', 'Replies'],
+        notes.map(n => [String(n.date || '').slice(0, 10), clean(n.body).slice(0, 120), n.reactions, n.restacks, n.replies]));
+    }
+    if (state.pub === -1) {
+      return mdTable(['Publication', 'Subscribers', 'Posts', 'Views/post', 'Open rate', 'Reactions/post'],
+        DATA.publications.map(p => {
+          const posts = p.posts, n = posts.length || 1;
+          return [clean(p.name), p.summary?.totalEmail ?? '—', posts.length,
+            Math.round(posts.reduce((a, x) => a + (x.views || 0), 0) / n),
+            pct1(aggRate(posts, 'opened', 'delivered', 1)),
+            (posts.reduce((a, x) => a + (x.reactions || 0), 0) / n).toFixed(1)];
+        }));
+    }
+    const p = pub(), posts = filtered().slice(0, MAX_ROWS);
+    const head = [`Publication: ${clean(p.name)} (${p.host})`,
+      `Subscribers: ${p.summary?.totalEmail ?? '—'} · Published posts: ${p.posts.length} · Range shown: ${rangeLabel()}`,
+      `Aggregate open rate: ${pct1(aggRate(p.posts, 'opened', 'delivered', 1))}`, ''].join('\n');
+    return head + mdTable(['Date', 'Title', 'Views', 'Open rate', 'Reactions', 'Comments', 'Signups'],
+      posts.map(x => [String(x.date || '').slice(0, 10), clean(x.title).slice(0, 90), x.views,
+        pct1(x.open_rate), x.reactions, x.comments, x.signups]));
+  }
+
+  const rangeLabel = () => state.days ? T.rangeDays(state.days) : T.rangeAll;
+
+  // navigator.clipboard no existe en file:// en algunos navegadores; el textarea sí funciona.
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch {}
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  }
+
+  const analyzebox = $('#analyzebox');
+  $('#analyzebtn').addEventListener('click', () => { renderClaude(); analyzebox.hidden = false; });
+  analyzebox.addEventListener('click', e => { if (e.target === analyzebox) analyzebox.hidden = true; });
+  $('#askclose').addEventListener('click', () => { $('#askbox').hidden = true; });
+
+  function renderClaude() {
+    const asks = state.pub === -1 ? T.asksCmp : state.pub === -2 ? T.asksNotes : T.asksPub;
+    const list = $('#asks');
+    list.innerHTML = asks.map(([label], i) =>
+      `<li class="ask"><div class="txt">${label}</div><button data-i="${i}">${T.claudeCopy}</button></li>`).join('');
+    list.onclick = async (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      const prompt = `${asks[+b.dataset.i][1]}\n\n${askData()}`;
+      if (!await copyText(prompt)) {
+        // Hay navegadores que bloquean el portapapeles en file://: se enseña para copiar a mano.
+        const box = $('#askbox'), ta = $('#asktext');
+        ta.value = prompt; box.hidden = false; ta.select();
+        return;
+      }
+      b.textContent = T.claudeCopied; b.classList.add('done');
+      setTimeout(() => { b.textContent = T.claudeCopy; b.classList.remove('done'); }, 2000);
+    };
+  }
+
   function selectView(idx) {
     state.pub = idx;
     state.selected = null;
@@ -734,6 +879,7 @@
   function render() {
     const cmp = state.pub === -1, notes = state.pub === -2;
     $('#compare').hidden = !cmp; $('#notesview').hidden = !notes;
+    renderClaude();
     $('#pubview').hidden = cmp || notes;
     // Absolutas/Relativas normaliza métricas de posts: en Notas no hay nada que normalizar.
     $('#mode').hidden = notes;
@@ -1225,6 +1371,7 @@
       </tr>`;
     }).join('') : `<tr><td colspan="${NOTE_COLS.length}" class="empty">${T.noNotes}</td></tr>`;
   }
+
 
   addEventListener('resize', () => { if (state.pub === -1) renderCompare(); else if (state.pub === -2) renderNotes(); else { renderSubs(); renderSources(); renderViews(); renderGeo(); } });
   initPanels();
