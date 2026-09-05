@@ -1,6 +1,10 @@
 # Chrome Web Store listing
 
-Everything the Developer Dashboard asks for, ready to paste. Generate the package
+**Published on 5 September 2026:** <https://chromewebstore.google.com/detail/nojlkggahlaaankemcnjdigdkogcnepn>
+(*Dashboard for Substack* in English, *Panel para Substack* in Spanish.)
+
+Kept as the record of what was submitted, and for the next version. Everything the
+Developer Dashboard asks for, ready to paste. Generate the package
 with `npm run package` and the images with `npm run store-shots`.
 
 - **Package:** `store/dashboard-for-substack-<version>.zip`

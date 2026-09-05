@@ -63,7 +63,7 @@ Elige una. Las tres producen el mismo panel.
 
 | | Ideal si | Necesitas |
 |---|---|---|
-| **1. Extensión de Chrome** | Instalar, pulsar y ya está | Chrome |
+| **1. [Extensión de Chrome](https://chromewebstore.google.com/detail/nojlkggahlaaankemcnjdigdkogcnepn)** | Instalar, pulsar y ya está | Chrome |
 | **2. Skill de Claude Code** | Que Claude además te lea los números | Claude Code |
 | **3. App local** | Quedarte con los datos crudos en archivos | Node 22+ |
 
@@ -76,9 +76,13 @@ Substack que ya tienes en tu Chrome, las guarda en el almacenamiento del propio
 navegador y enseña el panel como una página suya. Sin servidor, sin Node y sin
 volver a iniciar sesión.
 
-1. Abre `chrome://extensions`, activa el **modo de desarrollador** y pulsa **Cargar descomprimida**.
-2. Elige la carpeta `extension/`.
-3. Pulsa el icono de la extensión, luego **Sync all publications** y después **Open the dashboard**.
+**[Instálala desde la Chrome Web Store](https://chromewebstore.google.com/detail/nojlkggahlaaankemcnjdigdkogcnepn)**, donde está publicada como
+*Panel para Substack*. Luego pulsa su icono, **Sync all publications** y
+**Open the dashboard**.
+
+Si prefieres ejecutarla desde este repositorio (para leer antes el código, o para
+cambiarlo): abre `chrome://extensions`, activa el **modo de desarrollador**, pulsa
+**Cargar descomprimida** y elige la carpeta `extension/`.
 
 Abre una pestaña en segundo plano en cada una de tus publicaciones, ejecuta allí
 el mismo recolector de solo lectura y guarda el resultado en `chrome.storage`, en

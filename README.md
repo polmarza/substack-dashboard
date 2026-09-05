@@ -63,7 +63,7 @@ Pick one. They all produce the same dashboard.
 
 | | Best for | What you need |
 |---|---|---|
-| **1. Chrome extension** | Install, click, done | Chrome |
+| **1. [Chrome extension](https://chromewebstore.google.com/detail/nojlkggahlaaankemcnjdigdkogcnepn)** | Install, click, done | Chrome |
 | **2. Claude Code skill** | Having Claude read the numbers for you | Claude Code |
 | **3. Local app** | Keeping the raw data as files you own | Node 22+ |
 
@@ -76,9 +76,13 @@ session already in your normal Chrome, keeps them in the browser's own storage,
 and shows the dashboard as one of its own pages. No server, no Node, no second
 login.
 
-1. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**.
-2. Select the `extension/` folder.
-3. Click the extension icon, then **Sync all publications**, then **Open the dashboard**.
+**[Install it from the Chrome Web Store](https://chromewebstore.google.com/detail/nojlkggahlaaankemcnjdigdkogcnepn)** — it is published as
+*Dashboard for Substack*. Then click the extension icon, **Sync all publications**,
+and **Open the dashboard**.
+
+To run it from this repository instead (to read the code first, or to change it):
+open `chrome://extensions`, enable **Developer mode**, click **Load unpacked** and
+select the `extension/` folder.
 
 It opens a short-lived background tab on each of your publications, runs the same
 read-only collector there, and writes the result to `chrome.storage` on your
