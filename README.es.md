@@ -96,18 +96,20 @@ crece más allá de los 30 días que devuelve la propia API de Substack.
 
 ### 2. Skill de Claude Code
 
-Instala la skill y pide tus estadísticas. Claude abre un navegador, tú inicias
-sesión en Substack, y Claude descarga todo y construye el panel.
+Vive en su propio repo para poder instalarse y compartirse por separado:
+[polmarza/substack-stats-skill](https://github.com/polmarza/substack-stats-skill).
 
 ```bash
-cp -R substack-dashboard ~/.claude/skills/
+git clone https://github.com/polmarza/substack-stats-skill.git ~/.claude/skills/substack-stats-skill
 ```
 
-Luego basta con pedirlo: *«enséñame cómo van mis posts de Substack»*.
+Luego basta con pedirlo: *«enséñame cómo van mis posts de Substack»*. Claude
+abre un navegador, tú inicias sesión en Substack, y Claude descarga todo y
+construye el panel.
 
 La skill es autocontenida (`SKILL.md`, un recolector para el navegador, un
 generador en Python sin dependencias y una referencia de endpoints). No necesita
-servidor, ni Playwright, ni extensión. Ver [`substack-dashboard/SKILL.md`](substack-dashboard/SKILL.md).
+servidor, ni Playwright, ni extensión.
 
 ### 3. App local
 
@@ -175,13 +177,16 @@ El filtro de rango (todo / 365 / 90 / 30 días) recalcula todas las métricas de
 ## Estructura
 
 ```
-substack-dashboard/     la skill portable de Claude Code (SKILL.md, recolector, generador, endpoints)
 tools/                  la plantilla del panel y sus generadores (servidor, Playwright, capa SQLite)
 extension/              la extensión de Chrome: recolector, almacenamiento y su propio panel
 demo/                   datos ficticios para previsualizar (fuera de git)
 docs/                   capturas usadas en este README
 data/                   tus datos e histórico (fuera de git)
 ```
+
+La skill de Claude Code vivía aquí como `substack-dashboard/`; ahora tiene su
+propio repo, [substack-stats-skill](https://github.com/polmarza/substack-stats-skill),
+para poder instalarse y compartirse por separado.
 
 ### Publicar la extensión
 
@@ -192,10 +197,13 @@ Store. Todo lo que hace falta para la ficha —descripciones, propósito único,
 justificación por permiso— está en [`store/listing.md`](store/listing.md), y la
 política de privacidad a la que apunta es [`PRIVACY.md`](PRIVACY.md).
 
-`tools/template.html` es la única fuente del panel: `npm run templates` regenera
-desde ahí la copia de la skill y la página de la extensión. Ejecútalo después de
-tocar la plantilla — la página de la extensión no puede llevar scripts en línea,
-así que el generador la parte en `dashboard.html` + `dashboard.js`.
+`tools/template.html` es la única fuente del panel de este proyecto (app local
+y extensión): `npm run ext-template` regenera desde ahí la página de la
+extensión. Ejecútalo después de tocar la plantilla — la página de la extensión
+no puede llevar scripts en línea, así que el generador la parte en
+`dashboard.html` + `dashboard.js`. La skill vive ahora en su propio repo y
+mantiene su propia copia de la plantilla, así que los cambios de aquí no se
+propagan automáticamente.
 
 ## Créditos
 
@@ -205,7 +213,7 @@ Los contornos de los países proceden de [Natural Earth](https://www.naturaleart
 
 Esto usa una API **no documentada**. Substack puede cambiarla sin previo aviso y los endpoints pueden dejar de funcionar. Tómalo como una herramienta de trabajo, no como un producto con soporte. Las peticiones van a menos de 1 por segundo para no forzar los límites.
 
-Documentación de endpoints: [`substack-dashboard/references/endpoints.md`](substack-dashboard/references/endpoints.md). Referencia de la comunidad: [substack-api-reference](https://github.com/AnthonyDavidAdams/substack-api-reference).
+Documentación de endpoints: [`references/endpoints.md`](https://github.com/polmarza/substack-stats-skill/blob/main/references/endpoints.md) en el repo de la skill. Referencia de la comunidad: [substack-api-reference](https://github.com/AnthonyDavidAdams/substack-api-reference).
 
 ## Atribución
 

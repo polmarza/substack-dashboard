@@ -193,8 +193,8 @@ def main():
                    "notes": notes}, f, ensure_ascii=False)
     print(f"  {len(notes)} notas (ficticias)")
 
-    sys.path.insert(0, os.path.join(HERE, "..", "substack-dashboard", "scripts"))
-    import build as builder
+    sys.path.insert(0, HERE)
+    import demo_build as builder
     builder.build(OUT, os.path.join(OUT, "dashboard.html"))
 
 

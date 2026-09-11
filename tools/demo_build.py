@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""Construye dashboard.html a partir de los JSON descargados de Substack.
+"""Construye un dashboard.html a partir de los JSON de tools/make_demo.py.
 
-Uso:
-    python3 scripts/build.py <carpeta_datos> [salida.html]
-
-<carpeta_datos> contiene un archivo por publicación (p. ej. substack_my-newsletter.json),
-tal como los descarga assets/collect.js desde el navegador. No requiere dependencias externas.
+Copia recortada del builder de la skill (ahora en un repo aparte:
+https://github.com/polmarza/substack-stats-skill), usada solo para generar
+las capturas de demo/ y del README. Apunta a tools/template.html en vez de
+al template de la skill.
 """
 import json, sys, os, glob, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TEMPLATE = os.path.join(HERE, "..", "assets", "template.html")
+TEMPLATE = os.path.join(HERE, "template.html")
 
 
 def num(x, d=0):
