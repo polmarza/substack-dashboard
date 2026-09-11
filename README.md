@@ -96,18 +96,20 @@ past the 30 days Substack itself returns.
 
 ### 2. Claude Code skill
 
-Install the skill and ask for your stats. Claude opens a browser, you log into
-Substack, and Claude fetches everything and builds the dashboard for you.
+Lives in its own repo so it can be installed and shared on its own:
+[polmarza/substack-stats-skill](https://github.com/polmarza/substack-stats-skill).
 
 ```bash
-cp -R substack-dashboard ~/.claude/skills/
+git clone https://github.com/polmarza/substack-stats-skill.git ~/.claude/skills/substack-stats-skill
 ```
 
-Then just ask: *"show me how my Substack posts are performing"*.
+Then just ask: *"show me how my Substack posts are performing"*. Claude opens a
+browser, you log into Substack, and Claude fetches everything and builds the
+dashboard for you.
 
 The skill is self-contained (`SKILL.md`, a browser collector, a dependency-free
 Python builder, and an endpoint reference). It needs no server, no Playwright and
-no extension. See [`substack-dashboard/SKILL.md`](substack-dashboard/SKILL.md).
+no extension.
 
 ### 3. Local app
 
@@ -175,13 +177,16 @@ A range filter (all / 365 / 90 / 30 days) recomputes every post metric.
 ## Layout
 
 ```
-substack-dashboard/     the portable Claude Code skill (SKILL.md, collector, builder, endpoint docs)
 tools/                  the dashboard template and its generators (server, Playwright sync, SQLite layer)
 extension/              the Chrome extension: collector, storage and its own dashboard page
 demo/                   fictitious data for previewing (gitignored)
 docs/                   screenshots used in this README
 data/                   your snapshots + SQLite history (gitignored)
 ```
+
+The Claude Code skill used to live here as `substack-dashboard/`; it now has its
+own repo, [substack-stats-skill](https://github.com/polmarza/substack-stats-skill),
+so it can be installed and shared independently.
 
 ### Publishing the extension
 
@@ -192,10 +197,12 @@ listing needs — descriptions, single purpose, a justification per permission �
 in [`store/listing.md`](store/listing.md), and the privacy policy it points at is
 [`PRIVACY.md`](PRIVACY.md).
 
-`tools/template.html` is the single source for the dashboard: `npm run templates`
-regenerates the skill's copy and the extension's page from it. Run it after any
-change to the template — the extension's page cannot carry inline scripts, so the
-generator splits it into `dashboard.html` + `dashboard.js`.
+`tools/template.html` is the single source for this project's dashboard (local
+app and extension): `npm run ext-template` regenerates the extension's page
+from it. Run it after any change to the template — the extension's page
+cannot carry inline scripts, so the generator splits it into `dashboard.html`
++ `dashboard.js`. The skill lives in its own repo now and keeps its own copy
+of the template, so changes here don't propagate to it automatically.
 
 ## Credits
 
@@ -205,7 +212,7 @@ Country outlines come from [Natural Earth](https://www.naturalearthdata.com/) (1
 
 This uses an **undocumented** API. Substack can change it without notice, and endpoints may break. Treat this as a working tool, not a supported product. Requests are paced under ~1/second to stay well within limits.
 
-Endpoint documentation: [`substack-dashboard/references/endpoints.md`](substack-dashboard/references/endpoints.md). Community reference: [substack-api-reference](https://github.com/AnthonyDavidAdams/substack-api-reference).
+Endpoint documentation: [`references/endpoints.md`](https://github.com/polmarza/substack-stats-skill/blob/main/references/endpoints.md) in the skill repo. Community reference: [substack-api-reference](https://github.com/AnthonyDavidAdams/substack-api-reference).
 
 ## Attribution
 
